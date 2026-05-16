@@ -13,12 +13,14 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Smart Unzip Quran App Content
+    - name: Smart Unzip & Force Purge Old Platforms
       run: |
         unzip quran_app.zip
         if [ -d "quran_app" ]; then
           mv quran_app/* . 2>/dev/null || true
         fi
+        # تطهير جذري للمجلدات المعطوبة المرفوعة داخل الـ Zip لمنع التعارض
+        rm -rf platforms/android plugins/ node_modules/ package-lock.json
         ls -la
 
     - name: Set up Java JDK 17 Environment
@@ -36,7 +38,7 @@ jobs:
         node-version: '20'
     - run: npm install -g cordova
 
-    - name: Initialize Project & Generate Android Platform
+    - name: Initialize Project & Generate Fresh Android Platform
       run: |
         cordova platform add android --noscript
 

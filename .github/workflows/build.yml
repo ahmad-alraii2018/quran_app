@@ -39,12 +39,12 @@ jobs:
 
     - name: Compile and Build Official App Bundle Only
       run: |
-        # بناء الحزمة الرسمية المتوافقة تماماً مع المحرك الحديث للسيرفر
+        # الأمر الافتراضي والآمن 100% لبناء حزمة الـ AAB (ملف app الرسمي)
         cordova build android --release --device
 
     - name: Upload Finished Packages to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
         name: quran-app-final-packages
-        path: platforms/android/app/build/outputs/**/*
+        path: platforms/android/app/build/outputs/bundle/release/*.aab
         

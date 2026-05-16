@@ -51,3 +51,4 @@ jobs:
         name: quran-app-final-packages
         # التعديل الذهبي: سحب كافة المخرجات (APK أو AAB) غصباً عن السيستم من داخل المجلد الرئيسي
         path: platforms/android/app/build/outputs/**/*
+        

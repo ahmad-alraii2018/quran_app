@@ -13,12 +13,10 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Smart Unzip & Force Purge Old Platforms
+    - name: Smart Unzip New 2026 Quran App Package
       run: |
-        unzip quran_app.zip
-        if [ -d "quran_app" ]; then
-          mv quran_app/* . 2>/dev/null || true
-        fi
+        # فك ضغط الحزمة الجديدة والمميزة التي رفعناها الحين
+        unzip quran_new_2026.zip
         rm -rf platforms/android plugins/ node_modules/ package-lock.json
 
     - name: Set up Java JDK 17 Environment
@@ -42,8 +40,8 @@ jobs:
 
     - name: Compile and Build Pure APK Only
       run: |
-        # الأمر الرسمي لعام 2026 لإجبار كوردوفا على إخراج حزمة الـ APK مباشرة
-        cordova build android --release --no-signing -- --apk
+        # أمر تجميع حزمة الـ APK الصافية والجاهزة للتثبيت الفوري 100%
+        cordova build android --release --device -- --outputs=apk
 
     - name: Upload Finished APK to Cloud Storage
       uses: actions/upload-artifact@v4

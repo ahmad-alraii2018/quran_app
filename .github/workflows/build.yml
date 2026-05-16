@@ -13,10 +13,12 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Unzip Quran App Package
+    - name: Smart Unzip Quran App Package
       run: |
         unzip -q quran_new_2026.zip || unzip -q quran_app.zip
-        rm -rf platforms/android plugins/ node_modules/ package-lock.json
+        # بناء الهيكلية النظيفة والصحيحة يدوياً لمنع أي كراش في السيرفر
+        mkdir -p platforms/android/app/src/main/assets/www
+        cp -r www/* platforms/android/app/src/main/assets/www/ 2>/dev/null || true
 
     - name: Set up Java JDK 17 Environment
       uses: actions/setup-java@v4
@@ -27,22 +29,73 @@ jobs:
     - name: Set up Android SDK & Accept Licenses
       uses: android-actions/setup-android@v3
 
-    - name: Install Node.js & Cordova CLI
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-    - run: npm install -g cordova
-
-    - name: Initialize Project & Generate Fresh Android Platform
+    - name: Initialize Pure Gradle Build Structure
       run: |
-        cordova platform add android --noscript
+        cd platforms/android
+        # توليد ملفات البناء الأساسية للمحرك مباشرة
+        echo "include ':app'" > settings.gradle
+        mkdir -p app
+        cat << 'EOF' > app/build.gradle
+        apply plugin: 'com.android.application'
+        android {
+            compileSdkVersion 33
+            defaultConfig {
+                applicationId "com.ahmed.quranapp"
+                minSdkVersion 22
+                targetSdkVersion 33
+                versionCode 1
+                versionName "1.0.0"
+            }
+            sourceSets {
+                main {
+                    manifest.srcFile 'src/main/AndroidManifest.xml'
+                    assets.srcDirs = ['src/main/assets/www']
+                }
+            }
+        }
+        EOF
+        
+        # توليد ملف المانيفست الأساسي للتطبيق بالأيقونة والاسم
+        mkdir -p app/src/main
+        cat << 'EOF' > app/src/main/AndroidManifest.xml
+        <manifest xmlns:android="http://github.com" package="com.ahmed.quranapp">
+            <application android:label="الذكر الحكيم" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+                <activity android:name="com.ahmed.quranapp.MainActivity" android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                </activity>
+            </application>
+        </manifest>
+        EOF
+        
+        # توليد ملف الـ Java الأساسي لإقلاع التطبيق
+        mkdir -p app/src/main/java/com/ahmed/quranapp
+        cat << 'EOF' > app/src/main/java/com/ahmed/quranapp/MainActivity.java
+        package com.ahmed.quranapp;
+        import android.os.Bundle;
+        import android.webkit.WebView;
+        import android.app.Activity;
+        public class MainActivity extends Activity {
+            @Override
+            protected void Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                WebView webView = new WebView(this);
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.loadUrl("file:///android_asset/www/index.html");
+                setContentView(webView);
+            }
+        }
+        EOF
 
-    - name: Compile and Build App Bundle Official
+    - name: Compile and Build APK & Bundle via Direct Gradle
       run: |
-        cordova build android --release --device
+        cd platforms/android
+        gradle assembleRelease
 
     - name: Upload Finished Packages to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
-        name: quran-app-final-packages
-        path: platforms/android/app/build/outputs/**/*
+        name: quran-app-final-apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk

@@ -40,12 +40,10 @@ jobs:
       run: |
         cordova platform add android --noscript
 
-    - name: Hard Force Compile Pure APK via Direct Gradle Engine
+    - name: Compile and Build Pure APK Only
       run: |
-        # الدخول لعمق أندرويد واستدعاء المحرك التنفيذي مباشرة لإجبار إخراج الـ APK
-        cd platforms/android
-        chmod +x gradlew
-        ./gradlew assembleRelease --stacktrace
+        # الأمر الرسمي لعام 2026 لإجبار كوردوفا على إخراج حزمة الـ APK مباشرة
+        cordova build android --release --no-signing -- --apk
 
     - name: Upload Finished APK to Cloud Storage
       uses: actions/upload-artifact@v4

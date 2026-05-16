@@ -13,10 +13,13 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Unzip Quran App Content
+    - name: Smart Unzip Quran App Content
       run: |
         unzip quran_app.zip
-        mv quran_app/* . 2>/dev/null || true
+        if [ -d "quran_app" ]; then
+          mv quran_app/* . 2>/dev/null || true
+        fi
+        ls -la
 
     - name: Set up Java JDK 17 Environment
       uses: actions/setup-java@v4
@@ -45,4 +48,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: quran-app-release-apk
-        path: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk

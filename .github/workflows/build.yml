@@ -40,14 +40,15 @@ jobs:
       run: |
         cordova platform add android --noscript
 
-    - name: Compile and Build Pure APK Only
+    - name: Hard Force Compile Pure APK via Direct Gradle Engine
       run: |
-        # إجبار كوردوفا على بناء حزمة الـ APK الصافية حصراً للتثبيت الفوري
-        cordova build android --release --device -- --outputs=apk
+        # الدخول لعمق أندرويد واستدعاء المحرك التنفيذي مباشرة لإجبار إخراج الـ APK
+        cd platforms/android
+        chmod +x gradlew
+        ./gradlew assembleRelease --stacktrace
 
     - name: Upload Finished APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
         name: quran-app-final-apk
         path: platforms/android/app/build/outputs/apk/release/*.apk
-        

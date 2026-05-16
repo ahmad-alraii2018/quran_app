@@ -19,9 +19,7 @@ jobs:
         if [ -d "quran_app" ]; then
           mv quran_app/* . 2>/dev/null || true
         fi
-        # تطهير جذري للمجلدات المعطوبة المرفوعة داخل الـ Zip لمنع التعارض
         rm -rf platforms/android plugins/ node_modules/ package-lock.json
-        ls -la
 
     - name: Set up Java JDK 17 Environment
       uses: actions/setup-java@v4
@@ -42,12 +40,14 @@ jobs:
       run: |
         cordova platform add android --noscript
 
-    - name: Compile and Build APK via Internal Gradle Engine
+    - name: Compile and Build APK & Bundle Artifacts
       run: |
+        # بناء صيغة الـ APK العادية وصيغة الـ AAB معاً لضمان الإخراج
         cordova build android --release --device
+        cordova build android --release -- --outputs=apk
 
-    - name: Upload Finished APK Artifact to Cloud Storage
+    - name: Upload Finished Artifacts to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
-        name: quran-app-release-apk
-        path: platforms/android/app/build/outputs/apk/release/*.apk
+        name: quran-app-final-packages
+        path: platforms/android/app/build/outputs/**/*

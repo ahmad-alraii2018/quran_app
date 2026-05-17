@@ -1,4 +1,4 @@
-name: Pure Android Cloud Bundle Build
+name: Ultimate Quran App Full Cloud Build
 
 on:
   push:
@@ -42,12 +42,21 @@ jobs:
       run: |
         cordova platform add android --noscript
 
-    - name: Compile and Build Official App Bundle Only
+    - name: Supreme Local Icon Injection
       run: |
-        cordova build android --release --device
+        mkdir -p platforms/android/app/src/main/res/mipmap-mdpi platforms/android/app/src/main/res/mipmap-hdpi platforms/android/app/src/main/res/mipmap-xhdpi platforms/android/app/src/main/res/mipmap-xxhdpi 2>/dev/null
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
 
-    - name: Upload Finished Packages to Cloud Storage
+    - name: Compile and Build Official Signed APK Only
+      run: |
+        cordova build android --release --device -- --apk
+
+    - name: Upload Finished APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
-        name: quran-app-final-packages
-        path: platforms/android/app/build/outputs/bundle/release/*.aab
+        name: quran-app-final-apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk
+        

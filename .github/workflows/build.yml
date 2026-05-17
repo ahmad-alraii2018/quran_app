@@ -111,6 +111,8 @@ jobs:
         EOF
 
     - name: Compile and Build Official Signed APK
+      env:
+        CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL: https://gradle.org
       run: |
         cordova build android --release --device
 

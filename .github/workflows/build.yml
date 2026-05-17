@@ -22,46 +22,10 @@ jobs:
           cp -r quran_app/* . 2>/dev/null || true
         fi
 
-    - name: Auto-Generate Missing Core Files & Icon Config
-      run: |
-        if [ ! -f "package.json" ]; then
-        cat << 'EOF' > package.json
-        {
-          "name": "com.ahmed.quranapp",
-          "displayName": "QuranApp",
-          "version": "1.0.0",
-          "description": "Quran Islamic Encyclopedia 2026",
-          "main": "index.js",
-          "keywords": [
-            "ecosystem:cordova"
-          ],
-          "author": "Ahmed Dev",
-          "license": "ISC"
-        }
-        EOF
-        fi
-        
-        if [ ! -f "config.xml" ]; then
-        cat << 'EOF' > config.xml
-        <?xml version='1.0' encoding='utf-8'?>
-        <widget id="com.ahmed.quranapp" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
-            <name>Quran App</name>
-            <description>Quran Islamic Encyclopedia 2026</description>
-            <author email="dev@quranapp.com" href="http://quranapp.com">Ahmed Dev</author>
-            <content src="index.html" />
-            <access origin="*" />
-            <allow-intent href="http://*/*" />
-            <allow-intent href="https://*/*" />
-            <preference name="AndroidXEnabled" value="true" />
-            <icon src="www/img/logo.png" />
-        </widget>
-        EOF
-        fi
-
-    - name: Set up Java JDK Environment
+    - name: Set up Java JDK 17 Environment
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Set up Android SDK & Accept Licenses
@@ -75,31 +39,89 @@ jobs:
     - name: Install Cordova Global
       run: npm install -g cordova
 
-    - name: Restore Plugins and Prepare Android Project
+    - name: Force Clean and Repair Config Files
       run: |
-        rm -rf platforms/android
-        cordova platform add android@10.1.2 --noscript
+        rm -rf platforms/android plugins/ node_modules/ package-lock.json
+        
+        # إعادة كتابة config.xml بروابط حديثة متوافقة مع أندرويد 14 لمنع مشاكل القراءة
+        cat << 'EOF' > config.xml
+        <?xml version='1.0' encoding='utf-8'?>
+        <widget id="com.ahmed.quranapp" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
+            <name>Quran App</name>
+            <description>Quran Islamic Encyclopedia 2026</description>
+            <author email="dev@quranapp.com" href="http://quranapp.com">Ahmed Dev</author>
+            <content src="index.html" />
+            <access origin="*" />
+            <allow-intent href="http://*/*" />
+            <allow-intent href="https://*/*" />
+            <preference name="AndroidXEnabled" value="true" />
+            <preference name="GradleVersion" value="8.7" />
+            <icon src="www/img/logo.png" />
+        </widget>
+        EOF
+
+        # إعادة بناء package.json نظيف يمنع التعارضات
+        cat << 'EOF' > package.json
+        {
+          "name": "com.ahmed.quranapp",
+          "displayName": "QuranApp",
+          "version": "1.0.0",
+          "description": "Quran Islamic Encyclopedia 2026",
+          "main": "index.js",
+          "keywords": [
+            "ecosystem:cordova"
+          ],
+          "author": "Ahmed Dev",
+          "license": "ISC",
+          "dependencies": {
+            "cordova-android": "^13.0.0"
+          }
+        }
+        EOF
+        
+        npm install
+
+    - name: Create Android Platform
+      run: |
+        cordova platform add android@13.0.0 --noscript
         cordova prepare android
 
     - name: Supreme Local Icon Injection & Sync
       run: |
         mkdir -p www/img 2>/dev/null
         cp logo.png www/img/logo.png 2>/dev/null || true
-        
         mkdir -p platforms/android/app/src/main/res/mipmap-mdpi platforms/android/app/src/main/res/mipmap-hdpi platforms/android/app/src/main/res/mipmap-xhdpi platforms/android/app/src/main/res/mipmap-xxhdpi 2>/dev/null
         cp logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || true
         cp logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
         cp logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
         cp logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
 
-    - name: Bypass Cordova Build & Compile Directly with Native Gradle
+    - name: Generate Official Production Signing Keystore & Build Config
       run: |
-        cd platforms/android
-        chmod +x gradlew
-        ./gradlew assembleRelease
+        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=QuranApp, OU=Dev, O=Islamic, L=Makkah, S=Hijaz, C=SA"
+        cat << 'EOF' > build.json
+        {
+          "android": {
+            "release": {
+              "keystore": "quran.keystore",
+              "storePassword": "quran2026",
+              "alias": "quran_alias",
+              "password" : "quran2026",
+              "keystoreType": "",
+              "packageType": "apk"
+            }
+          }
+        }
+        EOF
 
-    - name: Upload Finished APK to Cloud Storage
+    - name: Compile and Build Official Signed APK
+      env:
+        CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL: https://gradle.org
+      run: |
+        cordova build android --release --device
+
+    - name: Upload Finished Signed APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
         name: quran-app-final-apk
-        path: platforms/android/app/build/outputs/apk/release/*.apk
+        path: platforms/android/app/build/outputs/**/*.apk

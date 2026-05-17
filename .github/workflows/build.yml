@@ -28,6 +28,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # تثبيت أداة Gradle بشكل مستقل ومحلي داخل نظام التشغيل لمنع التحميل من الخارج
+    - name: Setup Gradle Environment Locally
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.7'
+
     - name: Set up Android SDK & Accept Licenses
       uses: android-actions/setup-android@v3
 
@@ -39,11 +45,10 @@ jobs:
     - name: Install Cordova Global
       run: npm install -g cordova
 
-    - name: Force Clean and Repair Config Files
+    - name: Force Fix Config and Package JSON
       run: |
         rm -rf platforms/android plugins/ node_modules/ package-lock.json
         
-        # إعادة كتابة config.xml بروابط حديثة متوافقة مع أندرويد 14 لمنع مشاكل القراءة
         cat << 'EOF' > config.xml
         <?xml version='1.0' encoding='utf-8'?>
         <widget id="com.ahmed.quranapp" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
@@ -55,12 +60,10 @@ jobs:
             <allow-intent href="http://*/*" />
             <allow-intent href="https://*/*" />
             <preference name="AndroidXEnabled" value="true" />
-            <preference name="GradleVersion" value="8.7" />
             <icon src="www/img/logo.png" />
         </widget>
         EOF
 
-        # إعادة بناء package.json نظيف يمنع التعارضات
         cat << 'EOF' > package.json
         {
           "name": "com.ahmed.quranapp",
@@ -81,7 +84,7 @@ jobs:
         
         npm install
 
-    - name: Create Android Platform
+    - name: Restore Plugins and Prepare Android Project
       run: |
         cordova platform add android@13.0.0 --noscript
         cordova prepare android
@@ -90,6 +93,7 @@ jobs:
       run: |
         mkdir -p www/img 2>/dev/null
         cp logo.png www/img/logo.png 2>/dev/null || true
+        
         mkdir -p platforms/android/app/src/main/res/mipmap-mdpi platforms/android/app/src/main/res/mipmap-hdpi platforms/android/app/src/main/res/mipmap-xhdpi platforms/android/app/src/main/res/mipmap-xxhdpi 2>/dev/null
         cp logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || true
         cp logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
@@ -115,8 +119,6 @@ jobs:
         EOF
 
     - name: Compile and Build Official Signed APK
-      env:
-        CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL: https://gradle.org
       run: |
         cordova build android --release --device
 

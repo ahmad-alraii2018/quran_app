@@ -1,4 +1,4 @@
-name: Cordova Android Cloud Build
+name: Pure Android Cloud Bundle Build
 
 on:
   push:
@@ -13,13 +13,10 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Smart Unzip & Force Purge Old Platforms
+    - name: Smart Unzip & Core Clean
       run: |
-        # فك ضغط الملف الجديد الذي يحتوي على الـ 50 فكرة
-        unzip quran_new_2026.zip || unzip quran_app.zip
-        if [ -d "quran_app" ]; then
-          mv quran_app/* . 2>/dev/null || true
-        fi
+        # فك ضغط الحزمة الموسوعية النظيفة المتواجدة بالمستودع
+        unzip -q quran_final_2026.zip || unzip -q quran_app.zip
         rm -rf platforms/android plugins/ node_modules/ package-lock.json
 
     - name: Set up Java JDK 17 Environment
@@ -31,24 +28,24 @@ jobs:
     - name: Set up Android SDK & Accept Licenses
       uses: android-actions/setup-android@v3
 
-    - name: Install Node.js & Cordova CLI
+    - name: Install Pure Cordova CLI
       uses: actions/setup-node@v4
       with:
         node-version: '20'
     - run: npm install -g cordova
 
-    - name: Initialize Project & Generate Fresh Android Platform
+    - name: Generate Fresh Android Platform
       run: |
+        # بناء منصة أندرويد نظيفة ومعزولة داخل السحاب
         cordova platform add android --noscript
 
-    - name: Compile and Build Official Package
+    - name: Compile and Build Official App Bundle Only
       run: |
+        # الأمر الإمبراطوري الصافي لبناء حزمة الـ AAB الرسمية مجاناً وبدون أخطاء
         cordova build android --release --device
 
-    - name: Upload Finished Artifacts to Cloud Storage
+    - name: Upload Finished Packages to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
         name: quran-app-final-packages
-        # التعديل الذهبي: سحب كافة المخرجات (APK أو AAB) غصباً عن السيستم من داخل المجلد الرئيسي
-        path: platforms/android/app/build/outputs/**/*
-        
+        path: platforms/android/app/build/outputs/bundle/release/*.aab

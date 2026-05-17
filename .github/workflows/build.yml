@@ -58,10 +58,11 @@ jobs:
         EOF
         fi
 
-    - name: Set up Java JDK 17 Environment
+    # استخدام جافا 11 لأنه يتطابق تماماً مع إصدارات أندرويد المستقرة في كوردوفا
+    - name: Set up Java JDK Environment
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '11'
         distribution: 'temurin'
 
     - name: Set up Android SDK & Accept Licenses
@@ -75,10 +76,11 @@ jobs:
     - name: Install Cordova Global
       run: npm install -g cordova
 
+    # استخدام cordova-android@10.1.2 يجبر المشروع على العمل ببيئة Gradle 7/8 الآمنة تماماً
     - name: Restore Plugins and Prepare Android Project
       run: |
         rm -rf platforms/android
-        cordova platform add android@12.0.0 --noscript
+        cordova platform add android@10.1.2 --noscript
         cordova prepare android
 
     - name: Supreme Local Icon Injection & Sync
@@ -111,8 +113,6 @@ jobs:
         EOF
 
     - name: Compile and Build Official Signed APK
-      env:
-        CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL: https://gradle.org
       run: |
         cordova build android --release --device
 

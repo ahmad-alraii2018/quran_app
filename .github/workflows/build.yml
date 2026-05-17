@@ -58,7 +58,6 @@ jobs:
         EOF
         fi
 
-    # استخدام جافا 11 لأنه يتطابق تماماً مع إصدارات أندرويد المستقرة في كوردوفا
     - name: Set up Java JDK Environment
       uses: actions/setup-java@v4
       with:
@@ -76,7 +75,6 @@ jobs:
     - name: Install Cordova Global
       run: npm install -g cordova
 
-    # استخدام cordova-android@10.1.2 يجبر المشروع على العمل ببيئة Gradle 7/8 الآمنة تماماً
     - name: Restore Plugins and Prepare Android Project
       run: |
         rm -rf platforms/android
@@ -94,30 +92,14 @@ jobs:
         cp logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
         cp logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
 
-    - name: Generate Official Production Signing Keystore & Build Config
+    - name: Bypass Cordova Build & Compile Directly with Native Gradle
       run: |
-        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=QuranApp, OU=Dev, O=Islamic, L=Makkah, S=Hijaz, C=SA"
-        cat << 'EOF' > build.json
-        {
-          "android": {
-            "release": {
-              "keystore": "quran.keystore",
-              "storePassword": "quran2026",
-              "alias": "quran_alias",
-              "password" : "quran2026",
-              "keystoreType": "",
-              "packageType": "apk"
-            }
-          }
-        }
-        EOF
+        cd platforms/android
+        chmod +x gradlew
+        ./gradlew assembleRelease
 
-    - name: Compile and Build Official Signed APK
-      run: |
-        cordova build android --release --device
-
-    - name: Upload Finished Signed APK to Cloud Storage
+    - name: Upload Finished APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
         name: quran-app-final-apk
-        path: platforms/android/app/build/outputs/**/*.apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk

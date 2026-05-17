@@ -50,13 +50,13 @@ jobs:
         cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
         cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
 
-    - name: Compile and Build Official Signed APK Only
+    - name: Compile and Build Official App Bundle Only
       run: |
-        cordova build android --release --device -- --apk
+        cordova build android --release --device
 
-    - name: Upload Finished APK to Cloud Storage
+    - name: Upload Finished Packages to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
-        name: quran-app-final-apk
-        path: platforms/android/app/build/outputs/apk/release/*.apk
+        name: quran-app-final-packages
+        path: platforms/android/app/build/outputs/bundle/release/*.aab
         

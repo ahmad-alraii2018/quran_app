@@ -13,10 +13,14 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Smart Unzip & Core Clean
+    - name: Smart Unzip & Core Path Correction
       run: |
-        # فك ضغط الحزمة الموسوعية النظيفة المتواجدة بالمستودع
         unzip -q quran_final_2026.zip || unzip -q quran_app.zip
+        if [ -d "quran_final_2026" ]; then
+          cp -r quran_final_2026/* . 2>/dev/null || true
+        elif [ -d "quran_app" ]; then
+          cp -r quran_app/* . 2>/dev/null || true
+        fi
         rm -rf platforms/android plugins/ node_modules/ package-lock.json
 
     - name: Set up Java JDK 17 Environment
@@ -36,12 +40,10 @@ jobs:
 
     - name: Generate Fresh Android Platform
       run: |
-        # بناء منصة أندرويد نظيفة ومعزولة داخل السحاب
         cordova platform add android --noscript
 
     - name: Compile and Build Official App Bundle Only
       run: |
-        # الأمر الإمبراطوري الصافي لبناء حزمة الـ AAB الرسمية مجاناً وبدون أخطاء
         cordova build android --release --device
 
     - name: Upload Finished Packages to Cloud Storage

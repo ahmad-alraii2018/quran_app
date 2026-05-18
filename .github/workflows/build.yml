@@ -30,64 +30,48 @@ jobs:
     - name: Install Pure Cordova CLI Globally
       run: npm install -g cordova
 
-    - name: Core Configuration & Directory Repair
+    - name: Complete Auto-Detection & Build Execution
       run: |
-        cd quran_app || cd .
-        
-        # حقن ومطابقة اسم شعارك الفعلي logo.png بداخل ملف config.xml
-        if [ -f config.xml ]; then
-          sed -i '/<\/widget>/i \    <icon src="www/img/logo.png" \/>' config.xml
-          sed -i '/<platform name="android">/a \        <icon src="www/img/logo.png" \/>' config.xml
+        if [ -d "quran_app" ]; then
+          cd quran_app
         fi
-
-    - name: Restore Platforms and Prepare Android Project
-      run: |
-        cd quran_app || cd .
+        
         rm -rf platforms/android
         rm -rf plugins
+        
+        if [ -f config.xml ]; then
+          sed -i '/<\/widget>/i \    <icon src="www/img/icon.png" \/>' config.xml
+        fi
+        
         cordova platform add android@13.0.0 --save
-
-    - name: Supreme Icon Injection via Local Asset Matrix
-      run: |
-        cd quran_app || cd .
-        # إنشاء المجلدات وحقن الصورة بالاسمين (icon و logo) لضمان القبول التام من نظام أندرويد 14
+        
         mkdir -p platforms/android/app/src/main/res/mipmap-mdpi
         mkdir -p platforms/android/app/src/main/res/mipmap-hdpi
         mkdir -p platforms/android/app/src/main/res/mipmap-xhdpi
         mkdir -p platforms/android/app/src/main/res/mipmap-xxhdpi
         
-        # نسخ الصورة بالاسمين لتأمين الحزمة كلياً
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/logo.png
+        if [ -f "www/img/icon.png" ]; then
+          SRC_IMG="www/img/icon.png"
+        else
+          SRC_IMG="www/img/logo.png"
+        fi
         
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/logo.png
+        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-mdpi/icon.png
+        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-hdpi/icon.png
+        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-xhdpi/icon.png
+        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png
         
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/logo.png
-        
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/logo.png
-
-    - name: Defeat AAPT Image Cruncher Crash
-      run: |
-        cd quran_app || cd .
         if [ -f platforms/android/app/build.gradle ]; then
           sed -i '/android {/a \    aaptOptions { cruncherEnabled = false }' platforms/android/app/build.gradle
         fi
-
-    - name: Generate Official Production Signing Keystore
-      run: |
-        cd quran_app || cd .
+        
         keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=Ahmed, OU=QuranApp, O=IslamicInc, L=Latakia, S=Latakia, C=SY"
-
-    - name: Compile and Build Official Signed APK Only
-      run: |
-        cd quran_app || cd .
         cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --gradleArg=--no-daemon
 
     - name: Upload Finished Signed APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
         name: Quran-App-Official-Signed-APK
-        path: quran_app/platforms/android/app/build/outputs/apk/release/app-release.apk
+        path: |
+          quran_app/platforms/android/app/build/outputs/apk/release/app-release.apk
+          platforms/android/app/build/outputs/apk/release/app-release.apk

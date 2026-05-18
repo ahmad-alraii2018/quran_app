@@ -1,77 +1,21 @@
-name: Build Signed Quran App APK
-
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Repository Source Code
-      uses: actions/checkout@v4
-
-    - name: Set up Java JDK 17 Environment
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Set up Android SDK & Accept Licenses
-      uses: android-actions/setup-android@v3
-
-    - name: Setup Node.js Environment
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install Pure Cordova CLI Globally
-      run: npm install -g cordova
-
-    - name: Complete Auto-Detection & Build Execution
+    - name: Force Generate Clean Core Config Files
       run: |
-        if [ -d "quran_app" ]; then
-          cd quran_app
-        fi
-        
-        rm -rf platforms/android
-        rm -rf plugins
-        
-        if [ -f config.xml ]; then
-          sed -i '/<\/widget>/i \    <icon src="www/img/icon.png" \/>' config.xml
-        fi
-        
-        cordova platform add android@13.0.0 --save
-        
-        mkdir -p platforms/android/app/src/main/res/mipmap-mdpi
-        mkdir -p platforms/android/app/src/main/res/mipmap-hdpi
-        mkdir -p platforms/android/app/src/main/res/mipmap-xhdpi
-        mkdir -p platforms/android/app/src/main/res/mipmap-xxhdpi
-        
-        if [ -f "www/img/icon.png" ]; then
-          SRC_IMG="www/img/icon.png"
-        else
-          SRC_IMG="www/img/logo.png"
-        fi
-        
-        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-mdpi/icon.png
-        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-hdpi/icon.png
-        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-xhdpi/icon.png
-        cp $SRC_IMG platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png
-        
-        if [ -f platforms/android/app/build.gradle ]; then
-          sed -i '/android {/a \    aaptOptions { cruncherEnabled = false }' platforms/android/app/build.gradle
-        fi
-        
-        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=Ahmed, OU=QuranApp, O=IslamicInc, L=Latakia, S=Latakia, C=SY"
-        cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --gradleArg=--no-daemon
-
-    - name: Upload Finished Signed APK to Cloud Storage
-      uses: actions/upload-artifact@v4
-      with:
-        name: Quran-App-Official-Signed-APK
-        path: |
-          quran_app/platforms/android/app/build/outputs/apk/release/app-release.apk
-          platforms/android/app/build/outputs/apk/release/app-release.apk
+        cat << 'EOF' > package.json
+        {
+          "name": "com.dev2.quranapp",
+          "displayName": "Quran App",
+          "version": "2.0.0",
+          "dependencies": { "cordova-android": "^13.0.0" }
+        }
+        EOF
+        cat << 'EOF' > config.xml
+        <?xml version='1.0' encoding='utf-8'?>
+        <widget id="com.dev2.quranapp" version="2.0.0" xmlns="http://w3.org">
+            <name>Quran App</name>
+            <description>Quran Islamic Encyclopedia 2026</description>
+            <content src="index.html" />
+            <access origin="*" />
+            <preference name="AndroidXEnabled" value="true" />
+            <icon src="www/img/logo.png" />
+        </widget>
+        EOF

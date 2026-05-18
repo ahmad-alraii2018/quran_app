@@ -1,8 +1,8 @@
-name: Ultimate Quran App Pure APK Build
+name: Build Signed Quran App APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -13,84 +13,81 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Smart Unzip Any Zip File & Core Path Correction
-      run: |
-        # البحث الآلي وفك ضغط أي ملف zip متواجد بالمستودع تلقائياً غصباً عن الاسم
-        unzip -q *.zip || true
-        if [ -d "quran_final_2026" ]; then
-          cp -r quran_final_2026/* . 2>/dev/null || true
-        elif [ -d "quran_app" ]; then
-          cp -r quran_app/* . 2>/dev/null || true
-        fi
-
-    - name: Force Generate Clean Core Config Files
-      run: |
-        cat << 'EOF' > package.json
-        {
-          "name": "com.ahmed.quranapp",
-          "displayName": "الذكر الحكيم",
-          "version": "1.0.0",
-          "dependencies": { "cordova-android": "^13.0.0" }
-        }
-        EOF
-        cat << 'EOF' > config.xml
-        <?xml version='1.0' encoding='utf-8'?>
-        <widget id="com.ahmed.quranapp" version="1.0.0" xmlns="http://w3.org">
-            <name>الذكر الحكيم</name>
-            <description>Quran Islamic Encyclopedia 2026</description>
-            <content src="index.html" />
-            <access origin="*" />
-            <preference name="AndroidXEnabled" value="true" />
-        </widget>
-        EOF
-
     - name: Set up Java JDK 17 Environment
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
         distribution: 'temurin'
+        java-version: '17'
 
     - name: Set up Android SDK & Accept Licenses
       uses: android-actions/setup-android@v3
 
-    - name: Install Pure Cordova CLI
+    - name: Setup Node.js Environment
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-    - run: npm install -g cordova
+
+    - name: Install Pure Cordova CLI Globally
+      run: npm install -g cordova
+
+    - name: Core Configuration & Directory Repair
+      run: |
+        cd quran_app || cd .
+        
+        # حقن ومطابقة اسم شعارك الفعلي logo.png بداخل ملف config.xml
+        if [ -f config.xml ]; then
+          sed -i '/<\/widget>/i \    <icon src="www/img/logo.png" \/>' config.xml
+          sed -i '/<platform name="android">/a \        <icon src="www/img/logo.png" \/>' config.xml
+        fi
 
     - name: Restore Platforms and Prepare Android Project
       run: |
+        cd quran_app || cd .
         rm -rf platforms/android
-        cordova platform add android --noscript
-        cordova prepare android
+        rm -rf plugins
+        cordova platform add android@13.0.0 --save
 
-    - name: Supreme Local Icon Injection
+    - name: Supreme Icon Injection via Local Asset Matrix
       run: |
-        mkdir -p platforms/android/app/src/main/res/mipmap-mdpi platforms/android/app/src/main/res/mipmap-hdpi platforms/android/app/src/main/res/mipmap-xhdpi platforms/android/app/src/main/res/mipmap-xxhdpi 2>/dev/null
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/logo.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/logo.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/logo.png 2>/dev/null || true
-        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/logo.png 2>/dev/null || true
+        cd quran_app || cd .
+        # إنشاء المجلدات وحقن الصورة بالاسمين (icon و logo) لضمان القبول التام من نظام أندرويد 14
+        mkdir -p platforms/android/app/src/main/res/mipmap-mdpi
+        mkdir -p platforms/android/app/src/main/res/mipmap-hdpi
+        mkdir -p platforms/android/app/src/main/res/mipmap-xhdpi
+        mkdir -p platforms/android/app/src/main/res/mipmap-xxhdpi
+        
+        # نسخ الصورة بالاسمين لتأمين الحزمة كلياً
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/logo.png
+        
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/logo.png
+        
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/logo.png
+        
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/logo.png
 
     - name: Defeat AAPT Image Cruncher Crash
       run: |
-        echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
+        cd quran_app || cd .
+        if [ -f platforms/android/app/build.gradle ]; then
+          sed -i '/android {/a \    aaptOptions { cruncherEnabled = false }' platforms/android/app/build.gradle
+        fi
 
     - name: Generate Official Production Signing Keystore
       run: |
-        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=QuranApp, OU=Dev, O=Islamic, L=Makkah, S=Hijaz, C=SA"
+        cd quran_app || cd .
+        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=Ahmed, OU=QuranApp, O=IslamicInc, L=Latakia, S=Latakia, C=SY"
 
     - name: Compile and Build Official Signed APK Only
       run: |
-        cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --packageType=apk
+        cd quran_app || cd .
+        cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --gradleArg=--no-daemon
 
     - name: Upload Finished Signed APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
-        name: quran-app-final-apk
-        path: platforms/android/app/build/outputs/apk/release/*.apk
+        name: Quran-App-Official-Signed-APK
+        path: quran_app/platforms/android/app/build/outputs/apk/release/app-release.apk

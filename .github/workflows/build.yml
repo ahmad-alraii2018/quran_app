@@ -1,4 +1,4 @@
-name: Ultimate Quran App Full Cloud Build
+name: Ultimate Quran App Pure APK Build
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
           cp -r quran_app/* . 2>/dev/null || true
         fi
 
-    - name: Force Fix Config and Package JSON
+    - name: Force Generate Clean Core Config Files
       run: |
         cat << 'EOF' > package.json
         {
@@ -40,7 +40,6 @@ jobs:
             <content src="index.html" />
             <access origin="*" />
             <preference name="AndroidXEnabled" value="true" />
-            <icon src="www/img/logo.png" />
         </widget>
         EOF
 
@@ -59,7 +58,7 @@ jobs:
         node-version: '20'
     - run: npm install -g cordova
 
-    - name: Restore Plugins and Prepare Android Project
+    - name: Restore Platforms and Prepare Android Project
       run: |
         rm -rf platforms/android
         cordova platform add android --noscript
@@ -72,17 +71,25 @@ jobs:
         cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
         cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
         cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/logo.png 2>/dev/null || true
 
     - name: Defeat AAPT Image Cruncher Crash
       run: |
         echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
 
-    - name: Compile and Build Official App Bundle Only
+    - name: Generate Official Production Signing Keystore
       run: |
-        cordova build android --release --device
+        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=QuranApp, OU=Dev, O=Islamic, L=Makkah, S=Hijaz, C=SA"
 
-    - name: Upload Finished Packages to Cloud Storage
+    - name: Compile and Build Official Signed APK Only
+      run: |
+        cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --packageType=apk
+
+    - name: Upload Finished Signed APK to Cloud Storage
       uses: actions/upload-artifact@v4
       with:
-        name: quran-app-final-packages
-        path: platforms/android/app/build/outputs/bundle/release/*.aab
+        name: quran-app-final-apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk

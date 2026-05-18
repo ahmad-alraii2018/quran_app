@@ -1,3 +1,27 @@
+name: Ultimate Quran App Pure APK Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository Source Code
+      uses: actions/checkout@v4
+
+    - name: Smart Unzip Any Zip File & Core Path Correction
+      run: |
+        unzip -q *.zip || true
+        if [ -d "quran_final_2026" ]; then
+          cp -r quran_final_2026/* . 2>/dev/null || true
+        elif [ -d "quran_app" ]; then
+          cp -r quran_app/* . 2>/dev/null || true
+        fi
+
     - name: Force Generate Clean Core Config Files
       run: |
         cat << 'EOF' > package.json
@@ -19,3 +43,54 @@
             <icon src="www/img/logo.png" />
         </widget>
         EOF
+
+    - name: Set up Java JDK 17 Environment
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Set up Android SDK & Accept Licenses
+      uses: android-actions/setup-android@v3
+
+    - name: Install Pure Cordova CLI
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - run: npm install -g cordova
+
+    - name: Restore Platforms and Prepare Android Project
+      run: |
+        rm -rf platforms/android
+        cordova platform add android --noscript
+        cordova prepare android
+
+    - name: Supreme Local Icon Injection
+      run: |
+        mkdir -p platforms/android/app/src/main/res/mipmap-mdpi platforms/android/app/src/main/res/mipmap-hdpi platforms/android/app/src/main/res/mipmap-xhdpi platforms/android/app/src/main/res/mipmap-xxhdpi 2>/dev/null
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/logo.png 2>/dev/null || true
+
+    - name: Defeat AAPT Image Cruncher Crash
+      run: |
+        echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
+
+    - name: Generate Official Production Signing Keystore
+      run: |
+        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=QuranApp, OU=Dev, O=Islamic, L=Makkah, S=Hijaz, C=SA"
+
+    - name: Compile and Build Official Signed APK Only
+      run: |
+        cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --packageType=apk
+
+    - name: Upload Finished Signed APK to Cloud Storage
+      uses: actions/upload-artifact@v4
+      with:
+        name: quran-app-final-apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk

@@ -13,9 +13,10 @@ jobs:
     - name: Checkout Repository Source Code
       uses: actions/checkout@v4
 
-    - name: Smart Unzip & Core Path Correction
+    - name: Smart Unzip Any Zip File & Core Path Correction
       run: |
-        unzip -q quran_final_2026.zip || unzip -q quran_app.zip
+        # البحث الآلي وفك ضغط أي ملف zip متواجد بالمستودع تلقائياً غصباً عن الاسم
+        unzip -q *.zip || true
         if [ -d "quran_final_2026" ]; then
           cp -r quran_final_2026/* . 2>/dev/null || true
         elif [ -d "quran_app" ]; then

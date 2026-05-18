@@ -18,8 +18,13 @@ jobs:
         unzip -q *.zip || true
         if [ -d "quran_final_2026" ]; then
           cp -r quran_final_2026/* . 2>/dev/null || true
+          rm -rf quran_final_2026
         elif [ -d "quran_app" ]; then
           cp -r quran_app/* . 2>/dev/null || true
+          rm -rf quran_app
+        fi
+        if [ ! -d "www" ] && [ -d */www ]; then
+          cp -r */* . 2>/dev/null || true
         fi
 
     - name: Force Generate Clean Core Config Files

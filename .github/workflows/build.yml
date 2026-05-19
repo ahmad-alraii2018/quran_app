@@ -1,4 +1,4 @@
-name: Cordova Build and Sign APK 2026
+name: Supreme Cordova Quran App Compiler 2026
 
 on:
   push:
@@ -25,53 +25,89 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Cordova CLI
+      - name: Install Cordova CLI Globally
         run: npm install -g cordova@13
 
-      - name: Auto Setup Cordova Project
-        id: cordova-setup
+      - name: Step A - Smart Extraction and Root Coercion
         run: |
-          cordova create quran_project com.dev2.quranapp QuranApp
-          cd quran_project
-          if [ -d "../www" ]; then
-            cp -r ../www/. www/
-          elif [ -d "../public" ]; then
-            cp -r ../public/. www/
+          unzip -q quran_final_2026.zip
+          # Deep structural check to find where www folder is located after unzip
+          WWW_DIR=$(find . -type d -name "www" -print -quit)
+          if [ -z "$WWW_DIR" ]; then
+            echo "Critical Error: www folder not found inside the zip archive!"
+            exit 1
           fi
-          echo "project_dir=quran_project" >> $GITHUB_OUTPUT
+          echo "Found source www folder at: $WWW_DIR"
+          # Move everything out to the main runner root workspace safely
+          mkdir -p extracted_assets
+          cp -r $WWW_DIR/. extracted_assets/
 
-      - name: Inject Version and Config Identity
-        working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
+      - name: Step B - Identity Injection and Cordova Core Creation
+        run: |
+          cordova create quran_project com.dev2.quranapp "Quran App"
+          cd quran_project
+          # Wipe default cordovan template assets
+          rm -rf www/*
+          # Inject your real Quranic web files into the build core
+          cp -r ../extracted_assets/. www/
+
+      - name: Update Configuration Architecture
+        working-directory: quran_project
         run: |
           sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
           sed -i 's/version="[^"]*"/version="2.0.0"/' config.xml
           sed -i 's/<widget/<widget android-versionCode="2"/' config.xml
+          sed -i '/<\/widget>/i \    <icon src="www\/img\/logo.png" \/>' config.xml
 
-      - name: Prepare and Build Cordova Android
-        working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
+      - name: Prepare and Deploy Android Platform
+        working-directory: quran_project
         run: |
           cordova platform add android || true
-          cordova build android --release -- --packageType=apk
 
-      - name: ZipAlign and Sign APK (V2 Signing)
-        working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
+      - name: Step C - Supreme Multi Path Icon Injection
+        working-directory: quran_project
         run: |
+          # Force copy logo across all mipmap targets to overwrite the gray robot icon
+          RES_DIR="platforms/android/app/src/main/res"
+          if [ -d "$RES_DIR" ]; then
+            find "$RES_DIR" -type d -name "mipmap-*" | while read -r dir; do
+              cp www/img/logo.png "$dir/ic_launcher.png"
+              cp www/img/logo.png "$dir/ic_launcher_foreground.png"
+              echo "Overwrote launcher icons in: $dir"
+            done
+          fi
+
+      - name: Step D & E - Defeat AAPT Cruncher and Fix Targeting R Uncompressed Crash
+        working-directory: quran_project
+        run: |
+          # Disable AAPT image validation crashers
+          echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
+          
+          # Append noCompress 'arsc' to prevent targeting R+ parsing failures on Android 14
+          cat << 'EOF' >> platforms/android/app/build.gradle
+          android {
+              aaptOptions {
+                  noCompress 'arsc'
+              }
+          }
+          EOF
+
+      - name: Step F - Production Compilation and Advanced Key Signing
+        working-directory: quran_project
+        run: |
+          cordova build android --release -- --packageType=apk
+          
           APK_PATH=$(find platforms/android/ -name "*unsigned.apk" -print -quit)
           if [ -z "$APK_PATH" ]; then
             APK_PATH=$(find platforms/android/ -name "*.apk" -print -quit)
           fi
           
-          if [ -z "$APK_PATH" ]; then
-            echo "Error: Generated APK file could not be found!"
-            exit 1
-          fi
-          
+          echo "Targeting compiled production binary at: $APK_PATH"
           APK_DIR=$(dirname "$APK_PATH")
           APK_FILE=$(basename "$APK_PATH")
           
           cd "$APK_DIR"
           
-          # 1. Generate Keystore
           keytool -genkeypair -v \
             -keystore quran.keystore \
             -alias quran_alias \
@@ -82,14 +118,10 @@ jobs:
             -keypass quran2026 \
             -dname "CN=dev2, OU=QuranApp, O=Dev, L=Unknown, S=Unknown, C=US"
             
-          # 2. Find Android Build Tools for zipalign and apksigner
           BUILD_TOOLS_DIR=$(dirname $(find /usr/local/lib/android/sdk/build-tools/ -name "apksigner" -print -quit))
-          echo "Using Android Build Tools from: $BUILD_TOOLS_DIR"
           
-          # 3. ZipAlign the APK (Fixes the resource.arsc error)
           $BUILD_TOOLS_DIR/zipalign -v 4 "$APK_FILE" aligned-release.apk
           
-          # 4. Sign with apksigner (V2/V3 Signature required for Android 30+)
           $BUILD_TOOLS_DIR/apksigner sign --ks quran.keystore \
             --ks-key-alias quran_alias \
             --ks-pass pass:quran2026 \
@@ -98,7 +130,7 @@ jobs:
             
           cp verified-release.apk $GITHUB_WORKSPACE/com.dev2.quranapp-v2.0.0.apk
 
-      - name: Upload Signed APK to GitHub Actions
+      - name: Upload Master Piece Quran App to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026

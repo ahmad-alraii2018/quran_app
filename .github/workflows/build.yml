@@ -53,10 +53,10 @@ jobs:
           cordova platform add android || true
           cordova build android --release
 
-      - name: Sign APK with Embedded Credentials
+      - name: Sign App Bundle with Embedded Credentials
         working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
         run: |
-          cd platforms/android/app/build/outputs/apk/release/
+          cd platforms/android/app/build/outputs/bundle/release/
           
           keytool -genkeypair -v \
             -keystore quran.keystore \
@@ -72,13 +72,13 @@ jobs:
             -keystore quran.keystore \
             -storepass quran2026 \
             -keypass quran2026 \
-            app-release-unsigned.apk quran_alias
+            app-release-unsigned.aab quran_alias
             
-          mv app-release-unsigned.apk com.dev2.quranapp-v2.0.0.apk
-          mv com.dev2.quranapp-v2.0.0.apk ../../../../../../../
+          mv app-release-unsigned.aab com.dev2.quranapp-v2.0.0.aab
+          mv com.dev2.quranapp-v2.0.0.aab ../../../../../../../
 
-      - name: Upload Signed APK to GitHub Actions
+      - name: Upload Signed App Bundle to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026
-          path: com.dev2.quranapp-v2.0.0.apk
+          path: com.dev2.quranapp-v2.0.0.aab

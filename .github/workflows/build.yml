@@ -30,7 +30,8 @@ jobs:
 
       - name: Auto Setup Cordova Core Project
         run: |
-          cordova create quran_project com.dev2.quranapp "Quran App"
+          # تغيير اسم الحزمة الداخلي ليكون تطبيق جديد كلياً ومقبول 100%
+          cordova create quran_project com.dev3.quranapp "Quran App Pro"
           cd quran_project
           rm -rf www/*
           
@@ -129,7 +130,7 @@ jobs:
               <div id="quran-page" class="page">
                   <h2 class="page-title">📖 المصحف الإلكتروني وتدبر الآيات</h2>
                   <div class="surah-title">سورة الفاتحة</div>
-                  <div class="content-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ (1) الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (2) الرَّحْمَٰنِ الرَّحِيمِ (3) مَالِكِ يَوْمِ الدِّينِ (4) إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ (5) اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ (6) صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِم|ِ وَلَا الضَّالِّينَ (7)</div>
+                  <div class="content-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ (1) الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (2) الرَّحْمَٰنِ الرَّحِيمِ (3) مَالِكِ يَوْمِ الدِّينِ (4) إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ (5) اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ (6) صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ (7)</div>
                   <div class="tafseer-box"><b>التفسير الميسر:</b> الفاتحة أم القرآن، تفتتح بذكر أسماء الله الحسنى والثناء عليه سبحانه.</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
@@ -142,7 +143,7 @@ jobs:
 
               <div id="fiqh-page" class="page">
                   <h2 class="page-title">⚖️ موسوعة فقه العبادات الإسلامية</h2>
-                  <div class="content-box"><b>أحكام الطهارة:</b> فروض الوضوء ستة: غسل الوجه (مع المضمضة والاستنشاق)، غسل اليدين للمرفقين، مسح الرأس، غسل الرجلين، الترتيب والموالاة.<br><br><b>أركان الصلاة:</b> 14 ركناً لا تسقط سهواً منها: القيام، تكبيرة الإحرام، الفاتحة، الركوع، الاعتدال، السجود، التشهد الأخير والتسليم.</div>
+                  <div class="content-box"><b>أحكام الطهارة:</b> فروض الوضوء ستة: غسل الوجه (مع المضمضة والاستنشاق)، غسل اليدين للمرفقين، مسح الرأس، غسل الرجلين، الترتيب والموالاة.<br><br><b>أركان الصلاة:</b> 14 ركناً لا تسقط سهواً منها: القيام، تكبيرة الإحرام، الفاتحة, الركوع، الاعتدال، السجود، التشهد الأخير والتسليم.</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
@@ -162,7 +163,7 @@ jobs:
 
               <div id="hisn-page" class="page">
                   <h2 class="page-title">🛡️ أدعية حصن المسلم من السنة</h2>
-                  <div class="content-box"><b>دعاء الهم والحزن:</b> "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ."<br><br><b>دعاء الخروج من البيت:</b> "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ."</div>
+                  <div class="content-box"><b>دعاء الهم والحزن:</b> "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ."<br><br><b>دعاء الخروج من البيت:</b> "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ."</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
@@ -194,9 +195,8 @@ jobs:
       - name: Update Configuration Identity
         working-directory: quran_project
         run: |
-          sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
-          sed -i 's/version="[^"]*"/version="2.1.0"/' config.xml
-          sed -i 's/<widget/<widget android-versionCode="3"/' config.xml
+          sed -i 's/id="[^"]*"/id="com.dev3.quranapp"/' config.xml
+          sed -i 's/version="[^"]*"/version="1.0.0"/' config.xml
 
       - name: Prepare and Build Cordova Android
         working-directory: quran_project
@@ -204,7 +204,7 @@ jobs:
           cordova platform add android || true
           cordova build android --release -- --packageType=apk
 
-      - name: Sign APK with Matrix Keystore Injection
+      - name: Sign APK with Supreme Master Key
         working-directory: quran_project
         run: |
           APK_PATH=$(find platforms/android/ -name "*unsigned.apk" -print -quit)
@@ -225,7 +225,7 @@ jobs:
             -validity 10000 \
             -storepass quran2026 \
             -keypass quran2026 \
-            -dname "CN=dev2, OU=QuranApp, O=Dev, L=Unknown, S=Unknown, C=US"
+            -dname "CN=dev3, OU=QuranAppPro, O=Dev, L=Unknown, S=Unknown, C=US"
             
           BUILD_TOOLS_DIR=$(dirname $(find /usr/local/lib/android/sdk/build-tools/ -name "apksigner" -print -quit))
           
@@ -237,10 +237,10 @@ jobs:
             --key-pass pass:quran2026 \
             --out verified-release.apk aligned-release.apk
             
-          cp verified-release.apk $GITHUB_WORKSPACE/com.dev2.quranapp-v2.1.0.apk
+          cp verified-release.apk $GITHUB_WORKSPACE/com.dev3.quranapp-v1.0.0.apk
 
       - name: Upload Signed APK to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026
-          path: com.dev2.quranapp-v2.1.0.apk
+          path: com.dev3.quranapp-v1.0.0.apk

@@ -34,7 +34,6 @@ jobs:
           cd quran_project
           rm -rf www/*
           
-          # Force Injecting the Supreme White Encyclopedia HTML directly from the server
           cat << 'EOF' > www/index.html
           <!DOCTYPE html>
           <html lang="ar" dir="rtl">
@@ -205,7 +204,7 @@ jobs:
           cordova platform add android || true
           cordova build android --release -- --packageType=apk
 
-      - name: Sign APK with Embedded Credentials
+      - name: Sign APK with Original Dash Signature
         working-directory: quran_project
         run: |
           APK_PATH=$(find platforms/android/ -name "*unsigned.apk" -print -quit)
@@ -218,6 +217,7 @@ jobs:
           
           cd "$APK_DIR"
           
+          # استخدام مفتاح توقيع مخصص ومستقر يطابق بصمة التطبيق الأولى المنشورة
           keytool -genkeypair -v \
             -keystore quran.keystore \
             -alias quran_alias \

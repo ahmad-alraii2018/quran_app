@@ -33,13 +33,18 @@ jobs:
           cordova create quran_project com.dev2.quranapp "Quran App"
           cd quran_project
           rm -rf www/*
-          # سحب ملف الواجهة الرئيسي المكشوف مباشرة من المستودع
-          if [ -f "../index.html" ]; then
-            cp ../index.html www/index.html
-          else
-            echo "Critical Error: index.html not found in repository root!"
+          
+          REAL_INDEX=$(find .. -iname "index.html" -print -quit)
+          
+          if [ -z "$REAL_INDEX" ]; then
+            echo "Critical Error: index.html could not be found anywhere!"
             exit 1
           fi
+          
+          echo "Found index.html at: $REAL_INDEX"
+          SOURCE_DIR=$(dirname "$REAL_INDEX")
+          
+          cp -r "$SOURCE_DIR"/* www/ || cp "$REAL_INDEX" www/index.html
 
       - name: Update Configuration Identity
         working-directory: quran_project

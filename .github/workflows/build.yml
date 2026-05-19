@@ -28,33 +28,24 @@ jobs:
       - name: Install Cordova CLI
         run: npm install -g cordova@13
 
-      - name: Auto Create or Find Cordova Project
+      - name: Auto Setup Cordova Project
         id: cordova-setup
         run: |
-          CONFIG_PATH=$(find . -iname "config.xml" -print -quit)
-          if [ -z "$CONFIG_PATH" ]; then
-            echo "config.xml not found. Creating a fresh Cordova project..."
-            cordova create quran_project com.dev2.quranapp QuranApp
-            cd quran_project
-            if [ -d "../www" ]; then
-              cp -r ../www/. www/
-            elif [ -d "../public" ]; then
-              cp -r ../public/. www/
-            fi
-            echo "project_dir=quran_project" >> $GITHUB_OUTPUT
-          else
-            CORDOVA_DIR=$(dirname "$CONFIG_PATH")
-            echo "Cordova project found in: $CORDOVA_DIR"
-            echo "project_dir=$CORDOVA_DIR" >> $GITHUB_OUTPUT
+          cordova create quran_project com.dev2.quranapp QuranApp
+          cd quran_project
+          if [ -d "../www" ]; then
+            cp -r ../www/. www/
+          elif [ -d "../public" ]; then
+            cp -r ../public/. www/
           fi
+          echo "project_dir=quran_project" >> $GITHUB_OUTPUT
 
-      - name: Update Configuration Identity
+      - name: Inject Version and Config Identity
         working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
         run: |
-          if [ -f "config.xml" ]; then
-            sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
-            sed -i 's/version="[^"]*"/version="2.0.0"/' config.xml
-          fi
+          sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
+          sed -i 's/version="[^"]*"/version="2.0.0"/' config.xml
+          sed -i 's/<widget/<widget android-versionCode="2"/' config.xml
 
       - name: Prepare and Build Cordova Android
         working-directory: ${{ steps.cordova-setup.outputs.project_dir }}

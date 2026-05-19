@@ -1,97 +1,109 @@
-name: Cordova Build and Sign APK 2026
+name: Ultimate Quran App Pure APK Build
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository Source Code
+      uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+    - name: Smart Unzip Any Zip File & Core Path Correction
+      run: |
+        unzip -q *.zip || true
+        if [ -d "quran_final_2026" ]; then
+          cp -r quran_final_2026/* . 2>/dev/null || true
+          rm -rf quran_final_2026
+        elif [ -d "quran_app" ]; then
+          cp -r quran_app/* . 2>/dev/null || true
+          rm -rf quran_app
+        fi
+        if [ ! -d "www" ] && [ -d */www ]; then
+          cp -r */* . 2>/dev/null || true
+        fi
 
-      - name: Set up Node.js v20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+    - name: Force Generate Clean Core Config Files
+      run: |
+        cat << 'EOF' > package.json
+        {
+          "name": "com.dev2.quranapp",
+          "displayName": "Quran App",
+          "version": "2.0.0",
+          "dependencies": { "cordova-android": "^13.0.0" }
+        }
+        EOF
+        cat << 'EOF' > config.xml
+        <?xml version='1.0' encoding='utf-8'?>
+        <widget id="com.dev2.quranapp" version="2.0.0" xmlns="http://w3.org">
+            <name>Quran App</name>
+            <description>Quran Islamic Encyclopedia 2026</description>
+            <content src="index.html" />
+            <access origin="*" />
+            <preference name="AndroidXEnabled" value="true" />
+            <icon src="www/img/logo.png" />
+        </widget>
+        EOF
 
-      - name: Install Cordova CLI
-        run: npm install -g cordova@13
+    - name: Set up Java JDK 17 Environment
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-      - name: Auto Setup Cordova Project
-        id: cordova-setup
-        run: |
-          cordova create quran_project com.dev2.quranapp QuranApp
-          cd quran_project
-          if [ -d "../www" ]; then
-            cp -r ../www/. www/
-          elif [ -d "../public" ]; then
-            cp -r ../public/. www/
-          fi
-          echo "project_dir=quran_project" >> $GITHUB_OUTPUT
+    - name: Set up Android SDK & Accept Licenses
+      uses: android-actions/setup-android@v3
 
-      - name: Inject Version and Config Identity
-        working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
-        run: |
-          sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
-          sed -i 's/version="[^"]*"/version="2.0.0"/' config.xml
-          sed -i 's/<widget/<widget android-versionCode="2"/' config.xml
+    - name: Install Pure Cordova CLI
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - run: npm install -g cordova
 
-      - name: Prepare and Build Cordova Android
-        working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
-        run: |
-          cordova platform add android || true
-          cordova build android --release -- --packageType=apk
+    - name: Restore Platforms and Prepare Android Project
+      run: |
+        rm -rf platforms/android
+        cordova platform add android --noscript
+        cordova prepare android
 
-      - name: Sign APK with Embedded Credentials
-        working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
-        run: |
-          APK_PATH=$(find platforms/android/ -name "*unsigned.apk" -print -quit)
-          if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find platforms/android/ -name "*.apk" -print -quit)
-          fi
-          
-          if [ -z "$APK_PATH" ]; then
-            echo "Error: Generated APK file could not be found!"
-            exit 1
-          fi
-          
-          echo "Found APK at: $APK_PATH"
-          APK_DIR=$(dirname "$APK_PATH")
-          APK_FILE=$(basename "$APK_PATH")
-          
-          cd "$APK_DIR"
-          
-          keytool -genkeypair -v \
-            -keystore quran.keystore \
-            -alias quran_alias \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass quran2026 \
-            -keypass quran2026 \
-            -dname "CN=dev2, OU=QuranApp, O=Dev, L=Unknown, S=Unknown, C=US"
-            
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-            -keystore quran.keystore \
-            -storepass quran2026 \
-            -keypass quran2026 \
-            "$APK_FILE" quran_alias
-            
-          cp "$APK_FILE" $GITHUB_WORKSPACE/com.dev2.quranapp-v2.0.0.apk
+    - name: Supreme Local Icon Injection
+      run: |
+        mkdir -p platforms/android/app/src/main/res/mipmap-mdpi platforms/android/app/src/main/res/mipmap-hdpi platforms/android/app/src/main/res/mipmap-xhdpi platforms/android/app/src/main/res/mipmap-xxhdpi 2>/dev/null
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/icon.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-mdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-hdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xhdpi/logo.png 2>/dev/null || true
+        cp www/img/logo.png platforms/android/app/src/main/res/mipmap-xxhdpi/logo.png 2>/dev/null || true
 
-      - name: Upload Signed APK to GitHub Actions
-        uses: actions/upload-artifact@v4
-        with:
-          name: quran-app-release-2026
-          path: com.dev2.quranapp-v2.0.0.apk
+    - name: Force Uncompress Resources for Android 14
+      run: |
+        echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
+        mkdir -p platforms/android/app
+        cat << 'EOF' >> platforms/android/app/build.gradle
+        android {
+            aaptOptions {
+                noCompress 'arsc'
+            }
+        }
+        EOF
+
+    - name: Generate Official Production Signing Keystore
+      run: |
+        keytool -genkey -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=QuranApp, OU=Dev, O=Islamic, L=Makkah, S=Hijaz, C=SA"
+
+    - name: Compile and Build Official Signed APK Only
+      run: |
+        cordova build android --release -- --keystore=quran.keystore --storePassword=quran2026 --alias=quran_alias --password=quran2026 --packageType=apk
+
+    - name: Upload Finished Signed APK to Cloud Storage
+      uses: actions/upload-artifact@v4
+      with:
+        name: quran-app-final-apk
+        path: platforms/android/app/build/outputs/apk/release/*.apk

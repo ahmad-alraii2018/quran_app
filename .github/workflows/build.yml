@@ -31,14 +31,12 @@ jobs:
       - name: Step A - Smart Extraction and Root Coercion
         run: |
           unzip -q quran_final_2026.zip
-          # Deep structural check to find where www folder is located after unzip
           WWW_DIR=$(find . -type d -name "www" -print -quit)
           if [ -z "$WWW_DIR" ]; then
             echo "Critical Error: www folder not found inside the zip archive!"
             exit 1
           fi
           echo "Found source www folder at: $WWW_DIR"
-          # Move everything out to the main runner root workspace safely
           mkdir -p extracted_assets
           cp -r $WWW_DIR/. extracted_assets/
 
@@ -46,9 +44,7 @@ jobs:
         run: |
           cordova create quran_project com.dev2.quranapp "Quran App"
           cd quran_project
-          # Wipe default cordovan template assets
           rm -rf www/*
-          # Inject your real Quranic web files into the build core
           cp -r ../extracted_assets/. www/
 
       - name: Update Configuration Architecture
@@ -57,33 +53,17 @@ jobs:
           sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
           sed -i 's/version="[^"]*"/version="2.0.0"/' config.xml
           sed -i 's/<widget/<widget android-versionCode="2"/' config.xml
-          sed -i '/<\/widget>/i \    <icon src="www\/img\/logo.png" \/>' config.xml
 
       - name: Prepare and Deploy Android Platform
         working-directory: quran_project
         run: |
           cordova platform add android || true
 
-      - name: Step C - Supreme Multi Path Icon Injection
+      - name: Fix Android Manifest and Settings
         working-directory: quran_project
         run: |
-          # Force copy logo across all mipmap targets to overwrite the gray robot icon
-          RES_DIR="platforms/android/app/src/main/res"
-          if [ -d "$RES_DIR" ]; then
-            find "$RES_DIR" -type d -name "mipmap-*" | while read -r dir; do
-              cp www/img/logo.png "$dir/ic_launcher.png"
-              cp www/img/logo.png "$dir/ic_launcher_foreground.png"
-              echo "Overwrote launcher icons in: $dir"
-            done
-          fi
-
-      - name: Step D & E - Defeat AAPT Cruncher and Fix Targeting R Uncompressed Crash
-        working-directory: quran_project
-        run: |
-          # Disable AAPT image validation crashers
           echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
           
-          # Append noCompress 'arsc' to prevent targeting R+ parsing failures on Android 14
           cat << 'EOF' >> platforms/android/app/build.gradle
           android {
               aaptOptions {
@@ -135,3 +115,4 @@ jobs:
         with:
           name: quran-app-release-2026
           path: com.dev2.quranapp-v2.0.0.apk
+          

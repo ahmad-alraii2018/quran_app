@@ -34,17 +34,163 @@ jobs:
           cd quran_project
           rm -rf www/*
           
-          REAL_INDEX=$(find .. -iname "index.html" -print -quit)
-          
-          if [ -z "$REAL_INDEX" ]; then
-            echo "Critical Error: index.html could not be found anywhere!"
-            exit 1
-          fi
-          
-          echo "Found index.html at: $REAL_INDEX"
-          SOURCE_DIR=$(dirname "$REAL_INDEX")
-          
-          cp -r "$SOURCE_DIR"/* www/ || cp "$REAL_INDEX" www/index.html
+          # Force Injecting the Supreme White Encyclopedia HTML directly from the server
+          cat << 'EOF' > www/index.html
+          <!DOCTYPE html>
+          <html lang="ar" dir="rtl">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>الموسوعة الإسلامية الشاملة</title>
+              <style>
+                  :root {
+                      --bg-color: #f7f9fa;
+                      --card-bg: #ffffff;
+                      --text-color: #2c3e50;
+                      --accent-color: #029488;
+                      --gold-color: #b89047;
+                      --sub-text: #7f8c8d;
+                  }
+                  body {
+                      font-family: sans-serif;
+                      background-color: var(--bg-color);
+                      color: var(--text-color);
+                      margin: 0;
+                      padding: 20px;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                  }
+                  .header {
+                      text-align: center;
+                      margin: 30px 0 10px 0;
+                      border-bottom: 2px solid var(--gold-color);
+                      padding-bottom: 15px;
+                      width: 100%;
+                      max-width: 600px;
+                  }
+                  .header h1 { color: var(--accent-color); font-size: 24px; margin-bottom: 10px; }
+                  .grid-container {
+                      display: grid;
+                      grid-template-columns: repeat(2, 1fr);
+                      gap: 15px;
+                      width: 100%;
+                      max-width: 600px;
+                      margin-top: 10px;
+                  }
+                  .card {
+                      background-color: var(--card-bg);
+                      border: 2px solid var(--accent-color);
+                      border-radius: 14px;
+                      padding: 30px 15px;
+                      text-align: center;
+                      color: var(--accent-color);
+                      font-size: 16px;
+                      font-weight: bold;
+                      cursor: pointer;
+                      box-shadow: 0 4px 10px rgba(2, 148, 136, 0.05);
+                  }
+                  .card:active { background-color: var(--accent-color); color: #ffffff; }
+                  .page {
+                      display: none;
+                      width: 100%;
+                      max-width: 650px;
+                      background-color: var(--card-bg);
+                      border: 2px solid var(--accent-color);
+                      border-radius: 16px;
+                      padding: 25px;
+                      box-sizing: border-box;
+                      margin-top: 10px;
+                  }
+                  .page-title { color: var(--accent-color); border-bottom: 2px solid var(--gold-color); padding-bottom: 10px; text-align: center; }
+                  .surah-title { background-color: #edf2f4; padding: 8px 15px; margin-top: 20px; border-right: 5px solid var(--accent-color); font-weight: bold; }
+                  .content-box { line-height: 2; font-size: 18px; margin-top: 15px; text-align: justify; color: #1a252f; }
+                  .tafseer-box { font-size: 15px; color: #556779; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid var(--gold-color); }
+                  .zkr-box { background-color: #f8fafc; padding: 15px; border-radius: 10px; margin: 12px 0; border-right: 4px solid var(--gold-color); display: flex; justify-content: space-between; align-items: center; }
+                  .counter { background-color: var(--accent-color); color: #ffffff; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+                  .btn-back { display: block; width: fit-content; margin: 25px auto 0 auto; background-color: var(--accent-color); color: #ffffff; padding: 10px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+              </style>
+          </head>
+          <body>
+              <div id="main-menu">
+                  <div class="header">
+                      <h1>✨ المَوسُوعَة الإِسلَامِيَّة الشَّامِلَة ✨</h1>
+                      <p>مصحف عثماني مكتوب | سيرة نبوية موسعة | فقه العبادات | جامع الأذكار بالعداد التفاعلي | يعمل 100% بدون إنترنت</p>
+                  </div>
+                  <div class="grid-container">
+                      <div class="card" onclick="showPage('quran-page')">📖 المـصحف والتفسير</div>
+                      <div class="card" onclick="showPage('seera-page')">🕌 موسوعة السيرة</div>
+                      <div class="card" onclick="showPage('fiqh-page')">⚖️ موسوعة الفقه</div>
+                      <div class="card" onclick="showPage('stories-page')">📜 قصص الأنبياء</div>
+                      <div class="card" onclick="showPage('azkar-page')">📿 جامع الأذكار</div>
+                      <div class="card" onclick="showPage('hisn-page')">🛡️ حصن المسلم</div>
+                  </div>
+              </div>
+
+              <div id="quran-page" class="page">
+                  <h2 class="page-title">📖 المصحف الإلكتروني وتدبر الآيات</h2>
+                  <div class="surah-title">سورة الفاتحة</div>
+                  <div class="content-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ (1) الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (2) الرَّحْمَٰنِ الرَّحِيمِ (3) مَالِكِ يَوْمِ الدِّينِ (4) إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ (5) اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ (6) صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ (7)</div>
+                  <div class="tafseer-box"><b>التفسير الميسر:</b> الفاتحة أم القرآن، تفتتح بذكر أسماء الله الحسنى والثناء عليه سبحانه.</div>
+                  <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
+              </div>
+
+              <div id="seera-page" class="page">
+                  <h2 class="page-title">🕌 موسوعة السيرة النبوية المطهرة</h2>
+                  <div class="content-box"><b>المولد والنشأة:</b> ولد النبي بمكة المكرمة يوم الإثنين 12 ربيع الأول عام الفيل، يتيماً فكفله جده ثم عمه ونشأ طاهراً صادقاً أميناً.<br><br><b>البعثة والدعوة:</b> نزل عليه الوحي في غار حراء بسن الأربعين، فثبت ودعا للتوحيد وصبر على أذى قريش 13 عاماً حتى أذن الله بالهجرة.<br><br><b>الدولة والفتوحات:</b> هاجر للمدينة المنورة وأسس أركان الدولة وقاد الغزوات الكبرى وفتح مكة عافياً عن الجميع حتى توفي بسن 63.</div>
+                  <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
+              </div>
+
+              <div id="fiqh-page" class="page">
+                  <h2 class="page-title">⚖️ موسوعة فقه العبادات الإسلامية</h2>
+                  <div class="content-box"><b>أحكام الطهارة:</b> فروض الوضوء ستة: غسل الوجه (مع المضمضة والاستنشاق)، غسل اليدين للمرفقين، مسح الرأس، غسل الرجلين، الترتيب والموالاة.<br><br><b>أركان الصلاة:</b> 14 ركناً لا تسقط سهواً منها: القيام، تكبيرة الإحرام، الفاتحة، الركوع، الاعتدال، السجود، التشهد الأخير والتسليم.</div>
+                  <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
+              </div>
+
+              <div id="stories-page" class="page">
+                  <h2 class="page-title">📜 موسوعة قصص الأنبياء</h2>
+                  <div class="content-box"><b>آدم عليه السلام:</b> خلقه الله من طين بيديه ونفخ فيه من روحه وعلمه الأسماء كلها، وأنزله للأرض ليعمرها بالاستغفار والتوحيد.<br><br><b>نوح عليه السلام:</b> دعا قومه 950 سنة فكذبوه، فبنى السفينة العظيمة بأمر الله وأهلك الله الكافرين بالطوفان ونجى المؤمنين.</div>
+                  <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
+              </div>
+
+              <div id="azkar-page" class="page">
+                  <h2 class="page-title">📿 جامع الأذكار والتسابيح التفاعلية</h2>
+                  <div class="zkr-box"><div class="zkr-text">"أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له."</div><div class="counter" onclick="countCheck(this)">1</div></div>
+                  <div class="zkr-box"><div class="zkr-text">"رضيت بالله رباً، وبالإسلام ديناً، وبمحمد صلى الله عليه وسلم نبياً."</div><div class="counter" onclick="countCheck(this)">3</div></div>
+                  <div class="zkr-box"><div class="zkr-text">"اللهم صلّ وسلم على نبينا محمد"</div><div class="counter" onclick="countCheck(this)">10</div></div>
+                  <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
+              </div>
+
+              <div id="hisn-page" class="page">
+                  <h2 class="page-title">🛡️ أدعية حصن المسلم من السنة</h2>
+                  <div class="content-box"><b>دعاء الهم والحزن:</b> "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ."<br><br><b>دعاء الخروج من البيت:</b> "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ."</div>
+                  <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
+              </div>
+
+              <script>
+                  function showPage(pageId) {
+                      document.getElementById('main-menu').style.display = 'none';
+                      var pages = document.getElementsByClassName('page');
+                      for (var i = 0; i < pages.length; i++) { pages[i].style.display = 'none'; }
+                      document.getElementById(pageId).style.display = 'block';
+                      window.scrollTo(0, 0);
+                  }
+                  function showMainMenu() {
+                      var pages = document.getElementsByClassName('page');
+                      for (var i = 0; i < pages.length; i++) { pages[i].style.display = 'none'; }
+                      document.getElementById('main-menu').style.display = 'block';
+                  }
+                  function countCheck(element) {
+                      var currentCount = parseInt(element.innerText);
+                      if (!isNaN(currentCount) && currentCount > 0) {
+                          currentCount--; element.innerText = currentCount;
+                          if (currentCount === 0) { element.style.backgroundColor = "#7f8c8d"; element.innerText = "✓"; }
+                      }
+                  }
+              </script>
+          </body>
+          </html>
+          EOF
 
       - name: Update Configuration Identity
         working-directory: quran_project

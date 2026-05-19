@@ -1,4 +1,4 @@
-name: Supreme Cordova Quran App Compiler 2026
+name: Cordova Build and Sign APK 2026
 
 on:
   push:
@@ -28,61 +28,40 @@ jobs:
       - name: Install Cordova CLI Globally
         run: npm install -g cordova@13
 
-      - name: Step A - Smart Extraction and Root Coercion
-        run: |
-          unzip -q quran_final_2026.zip
-          WWW_DIR=$(find . -type d -name "www" -print -quit)
-          if [ -z "$WWW_DIR" ]; then
-            echo "Critical Error: www folder not found inside the zip archive!"
-            exit 1
-          fi
-          echo "Found source www folder at: $WWW_DIR"
-          mkdir -p extracted_assets
-          cp -r $WWW_DIR/. extracted_assets/
-
-      - name: Step B - Identity Injection and Cordova Core Creation
+      - name: Auto Setup Cordova Core Project
         run: |
           cordova create quran_project com.dev2.quranapp "Quran App"
           cd quran_project
           rm -rf www/*
-          cp -r ../extracted_assets/. www/
+          # سحب ملف الواجهة الرئيسي المكشوف مباشرة من المستودع
+          if [ -f "../index.html" ]; then
+            cp ../index.html www/index.html
+          else
+            echo "Critical Error: index.html not found in repository root!"
+            exit 1
+          fi
 
-      - name: Update Configuration Architecture
+      - name: Update Configuration Identity
         working-directory: quran_project
         run: |
           sed -i 's/id="[^"]*"/id="com.dev2.quranapp"/' config.xml
           sed -i 's/version="[^"]*"/version="2.0.0"/' config.xml
           sed -i 's/<widget/<widget android-versionCode="2"/' config.xml
 
-      - name: Prepare and Deploy Android Platform
+      - name: Prepare and Build Cordova Android
         working-directory: quran_project
         run: |
           cordova platform add android || true
-
-      - name: Fix Android Manifest and Settings
-        working-directory: quran_project
-        run: |
-          echo "android.aaptOptions.cruncherEnabled=false" >> platforms/android/gradle.properties
-          
-          cat << 'EOF' >> platforms/android/app/build.gradle
-          android {
-              aaptOptions {
-                  noCompress 'arsc'
-              }
-          }
-          EOF
-
-      - name: Step F - Production Compilation and Advanced Key Signing
-        working-directory: quran_project
-        run: |
           cordova build android --release -- --packageType=apk
-          
+
+      - name: Sign APK with Embedded Credentials
+        working-directory: quran_project
+        run: |
           APK_PATH=$(find platforms/android/ -name "*unsigned.apk" -print -quit)
           if [ -z "$APK_PATH" ]; then
             APK_PATH=$(find platforms/android/ -name "*.apk" -print -quit)
           fi
           
-          echo "Targeting compiled production binary at: $APK_PATH"
           APK_DIR=$(dirname "$APK_PATH")
           APK_FILE=$(basename "$APK_PATH")
           
@@ -110,9 +89,8 @@ jobs:
             
           cp verified-release.apk $GITHUB_WORKSPACE/com.dev2.quranapp-v2.0.0.apk
 
-      - name: Upload Master Piece Quran App to Artifacts
+      - name: Upload Signed APK to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026
           path: com.dev2.quranapp-v2.0.0.apk
-          

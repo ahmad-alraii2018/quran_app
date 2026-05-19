@@ -56,7 +56,21 @@ jobs:
       - name: Sign APK with Embedded Credentials
         working-directory: ${{ steps.cordova-setup.outputs.project_dir }}
         run: |
-          cd platforms/android/app/build/outputs/apk/release/
+          APK_PATH=$(find platforms/android/ -name "*unsigned.apk" -print -quit)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find platforms/android/ -name "*.apk" -print -quit)
+          fi
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "Error: Generated APK file could not be found!"
+            exit 1
+          fi
+          
+          echo "Found APK at: $APK_PATH"
+          APK_DIR=$(dirname "$APK_PATH")
+          APK_FILE=$(basename "$APK_PATH")
+          
+          cd "$APK_DIR"
           
           keytool -genkeypair -v \
             -keystore quran.keystore \
@@ -72,9 +86,9 @@ jobs:
             -keystore quran.keystore \
             -storepass quran2026 \
             -keypass quran2026 \
-            app-release.apk quran_alias
+            "$APK_FILE" quran_alias
             
-          mv app-release.apk ../../../../../../../com.dev2.quranapp-v2.0.0.apk
+          cp "$APK_FILE" $GITHUB_WORKSPACE/com.dev2.quranapp-v2.0.0.apk
 
       - name: Upload Signed APK to GitHub Actions
         uses: actions/upload-artifact@v4

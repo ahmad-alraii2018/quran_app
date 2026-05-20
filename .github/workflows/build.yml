@@ -30,8 +30,7 @@ jobs:
 
       - name: Auto Setup Cordova Core Project
         run: |
-          # تغيير اسم الحزمة الداخلي ليكون تطبيق جديد كلياً ومقبول 100%
-          cordova create quran_project com.dev3.quranapp "Quran App Pro"
+          cordova create quran_project com.islamic.encyclopedia2026 "Al-Mawsooah Al-Islamiyyah"
           cd quran_project
           rm -rf www/*
           
@@ -41,7 +40,7 @@ jobs:
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>الموسوعة الإسلامية الشاملة</title>
+              <title>الموسوعة الإسلامية الشاملة 2026</title>
               <style>
                   :root {
                       --bg-color: #f7f9fa;
@@ -63,107 +62,119 @@ jobs:
                   }
                   .header {
                       text-align: center;
-                      margin: 30px 0 10px 0;
+                      margin: 25px 0 15px 0;
                       border-bottom: 2px solid var(--gold-color);
                       padding-bottom: 15px;
                       width: 100%;
-                      max-width: 600px;
+                      max-width: 500px;
                   }
-                  .header h1 { color: var(--accent-color); font-size: 24px; margin-bottom: 10px; }
+                  .header h1 { color: var(--accent-color); font-size: 24px; margin-bottom: 8px; }
                   .grid-container {
-                      display: grid;
-                      grid-template-columns: repeat(2, 1fr);
+                      display: flex;
+                      flex-direction: column;
                       gap: 15px;
                       width: 100%;
-                      max-width: 600px;
+                      max-width: 500px;
                       margin-top: 10px;
                   }
                   .card {
                       background-color: var(--card-bg);
                       border: 2px solid var(--accent-color);
-                      border-radius: 14px;
-                      padding: 30px 15px;
+                      border-radius: 12px;
+                      padding: 22px 20px;
                       text-align: center;
                       color: var(--accent-color);
-                      font-size: 16px;
+                      font-size: 18px;
                       font-weight: bold;
                       cursor: pointer;
-                      box-shadow: 0 4px 10px rgba(2, 148, 136, 0.05);
+                      box-shadow: 0 4px 8px rgba(2, 148, 136, 0.04);
+                      transition: all 0.2s ease;
                   }
-                  .card:active { background-color: var(--accent-color); color: #ffffff; }
+                  .card:active { background-color: var(--accent-color); color: #ffffff; transform: scale(0.98); }
                   .page {
                       display: none;
                       width: 100%;
-                      max-width: 650px;
+                      max-width: 550px;
                       background-color: var(--card-bg);
                       border: 2px solid var(--accent-color);
                       border-radius: 16px;
                       padding: 25px;
                       box-sizing: border-box;
                       margin-top: 10px;
+                      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
                   }
                   .page-title { color: var(--accent-color); border-bottom: 2px solid var(--gold-color); padding-bottom: 10px; text-align: center; }
-                  .surah-title { background-color: #edf2f4; padding: 8px 15px; margin-top: 20px; border-right: 5px solid var(--accent-color); font-weight: bold; }
+                  .surah-title { background-color: #edf2f4; padding: 10px 15px; margin-top: 20px; border-right: 5px solid var(--accent-color); font-weight: bold; font-size: 18px; border-radius: 4px; }
                   .content-box { line-height: 2; font-size: 18px; margin-top: 15px; text-align: justify; color: #1a252f; }
-                  .tafseer-box { font-size: 15px; color: #556779; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid var(--gold-color); }
-                  .zkr-box { background-color: #f8fafc; padding: 15px; border-radius: 10px; margin: 12px 0; border-right: 4px solid var(--gold-color); display: flex; justify-content: space-between; align-items: center; }
-                  .counter { background-color: var(--accent-color); color: #ffffff; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-                  .btn-back { display: block; width: fit-content; margin: 25px auto 0 auto; background-color: var(--accent-color); color: #ffffff; padding: 10px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+                  .tafseer-box { font-size: 15px; color: #556779; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid var(--gold-color); margin-top: 10px; }
+                  .zkr-box { background-color: #f8fafc; padding: 15px; border-radius: 10px; margin: 12px 0; border-right: 4px solid var(--gold-color); display: flex; justify-content: space-between; align-items: center; border-left: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+                  .zkr-text { font-size: 16px; flex: 1; padding-left: 10px; text-align: justify; }
+                  .counter { background-color: var(--accent-color); color: #ffffff; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; user-select: none; }
+                  .btn-back { display: block; width: fit-content; margin: 25px auto 0 auto; background-color: var(--accent-color); color: #ffffff; padding: 10px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; }
               </style>
           </head>
           <body>
               <div id="main-menu">
                   <div class="header">
                       <h1>✨ المَوسُوعَة الإِسلَامِيَّة الشَّامِلَة ✨</h1>
-                      <p>مصحف عثماني مكتوب | سيرة نبوية موسعة | فقه العبادات | جامع الأذكار بالعداد التفاعلي | يعمل 100% بدون إنترنت</p>
+                      <p>المصحف الإلكتروني المكتوب | السيرة النبوية الموسعة | فقه العبادات اليومية | جامع الأذكار والأدعية التفاعلية بالعداد</p>
                   </div>
                   <div class="grid-container">
-                      <div class="card" onclick="showPage('quran-page')">📖 المـصحف والتفسير</div>
-                      <div class="card" onclick="showPage('seera-page')">🕌 موسوعة السيرة</div>
-                      <div class="card" onclick="showPage('fiqh-page')">⚖️ موسوعة الفقه</div>
-                      <div class="card" onclick="showPage('stories-page')">📜 قصص الأنبياء</div>
-                      <div class="card" onclick="showPage('azkar-page')">📿 جامع الأذكار</div>
-                      <div class="card" onclick="showPage('hisn-page')">🛡️ حصن المسلم</div>
+                      <div class="card" onclick="showPage('quran-page')">📖 المـصحف والتفسير الميسر</div>
+                      <div class="card" onclick="showPage('seera-page')">🕌 موسوعة السيرة النبوية المطهرة</div>
+                      <div class="card" onclick="showPage('fiqh-page')">⚖️ موسوعة الفقه الإسلامي الميسر</div>
+                      <div class="card" onclick="showPage('stories-page')">📜 قصص الأنبياء والمرسلين</div>
+                      <div class="card" onclick="showPage('azkar-page')">📿 جامع الأذكار والتسابيح اليومية</div>
+                      <div class="card" onclick="showPage('hisn-page')">🛡️ أدعية حصن المسلم الكاملة</div>
                   </div>
               </div>
 
               <div id="quran-page" class="page">
                   <h2 class="page-title">📖 المصحف الإلكتروني وتدبر الآيات</h2>
-                  <div class="surah-title">سورة الفاتحة</div>
+                  <div class="surah-title">سورة الفاتحة (الكتاب السبع المثاني)</div>
                   <div class="content-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ (1) الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (2) الرَّحْمَٰنِ الرَّحِيمِ (3) مَالِكِ يَوْمِ الدِّينِ (4) إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ (5) اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ (6) صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ (7)</div>
-                  <div class="tafseer-box"><b>التفسير الميسر:</b> الفاتحة أم القرآن، تفتتح بذكر أسماء الله الحسنى والثناء عليه سبحانه.</div>
+                  <div class="tafseer-box"><b>تفسير السعدي الميسر:</b> هذه السورة تشتمل على توحيد الربوبية والألوهية، والثناء التام على الله عز وجل، وسؤال الثبات على الصراط المستقيم صراط أهل الإيمان ونبذ صراط أهل الغضب والضلال.</div>
+                  
+                  <div class="surah-title">سورة الملك (المنجية من عذاب القبر)</div>
+                  <div class="content-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ تَبَارَكَ الَّذِي بِيَدِهِ الْمُلْكُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ (1) الَّذِي خَلَقَ الْمَوْتَ وَالْحَيَاةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلًا ۚ وَهُوَ الْعَزِيزُ الْغَفُورُ (2) الَّذِي خَلَقَ سَبْعَ سَمَاوَاتٍ طِبَاقًا ۖ مَّا تَرَىٰ فِي خَلْقِ الرَّحْمَٰنِ مِن تَفَاوُتٍ ۖ فَارْجِعِ الْبَصَرَ هَلْ تَرَىٰ مِن فُطُورٍ (3) ثُمَّ ارْجِعِ الْبَصَرَ كَرَّتَيْنِ يَنقَلِبْ إِلَيْكَ الْبَصَرُ خَاسِئًا وَهُوَ حَسِيرٌ (4)</div>
+                  <div class="tafseer-box"><b>تفسير السعدي الميسر:</b> تبارك وتعظم خير الله رب العالمين الذي بيده ملك السماوات والأرض وتدبير الخلائق، واختبر عباده بالموت والحياة ليميز المخلص المحسن في طاعته وعمله.</div>
+                  
+                  <div class="surah-title">سورة الإخلاص (تعدل ثلث القرآن)</div>
+                  <div class="content-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ هُوَ اللَّهُ أَحَدٌ (1) اللَّهُ الصَّمَدُ (2) لَمْ يَلِدْ وَلَمْ يُولَدْ (3) وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ (4)</div>
+                  <div class="tafseer-box"><b>تفسير السعدي الميسر:</b> قل يا محمد إن الله هو الواحد المنفرد بالكمال، المعبود السيد الذي تقصده الخلائق في جميع حوائجها، تنزه عن الشريك والولد والمثيل سبحانه.</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
               <div id="seera-page" class="page">
-                  <h2 class="page-title">🕌 موسوعة السيرة النبوية المطهرة</h2>
-                  <div class="content-box"><b>المولد والنشأة:</b> ولد النبي بمكة المكرمة يوم الإثنين 12 ربيع الأول عام الفيل، يتيماً فكفله جده ثم عمه ونشأ طاهراً صادقاً أميناً.<br><br><b>البعثة والدعوة:</b> نزل عليه الوحي في غار حراء بسن الأربعين، فثبت ودعا للتوحيد وصبر على أذى قريش 13 عاماً حتى أذن الله بالهجرة.<br><br><b>الدولة والفتوحات:</b> هاجر للمدينة المنورة وأسس أركان الدولة وقاد الغزوات الكبرى وفتح مكة عافياً عن الجميع حتى توفي بسن 63.</div>
+                  <h2 class="page-title">🕌 موسوعة السيرة النبوية الشاملة</h2>
+                  <div class="content-box"><b>المولد النبوي المبارك والنشأة:</b> ولد الحبيب المصطفى عليه الصلاة والسلام في مكة المكرمة يوم الإثنين 12 ربيع الأول في عام الفيل، ولد يتيماً فكفله جده عبد المطلب ثم عمه أبو طالب ونشأ في بادية بني سعد طاهراً صادقاً أميناً.<br><br><b>بدء البعثة والرسالة:</b> نزل عليه أمين الوحي جبريل عليه السلام في غار حراء وهو في سن الأربعين، فثبت ودعا للتوحيد وصبر على أذى قريش 13 عاماً ببطحاء مكة حتى أذن الله له بالهجرة.<br><br><b>تأسيس الدولة والفتوحات:</b> هاجر للمدينة المنورة وأسس أركان الدولة الإسلامية العادلة وقاد الغزوات التاريخية الكبرى (بدر الكبرى، أحد، الخندق) وفتح مكة عافياً عن قريش حتى توفي في سن 63 بعد أداء الأمانة كاملة.</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
               <div id="fiqh-page" class="page">
-                  <h2 class="page-title">⚖️ موسوعة فقه العبادات الإسلامية</h2>
-                  <div class="content-box"><b>أحكام الطهارة:</b> فروض الوضوء ستة: غسل الوجه (مع المضمضة والاستنشاق)، غسل اليدين للمرفقين، مسح الرأس، غسل الرجلين، الترتيب والموالاة.<br><br><b>أركان الصلاة:</b> 14 ركناً لا تسقط سهواً منها: القيام، تكبيرة الإحرام، الفاتحة, الركوع، الاعتدال، السجود، التشهد الأخير والتسليم.</div>
+                  <h2 class="page-title">⚖️ موسوعة فقه العبادات الميسرة</h2>
+                  <div class="content-box"><b>أحكام الطهارة والوضوء:</b> فروض الوضوء الشرعية ستة واجبة: غسل الوجه كاملاً (ومعه المضمضة والاستنشاق)، غسل اليدين للمرفقين، مسح الرأس كله، غسل الرجلين للكعبين، الترتيب والموالاة بين الأعضاء.<br><br><b>أركان الصلاة المفروضة:</b> أركان الصلاة 14 ركناً لا تسقط سهواً منها: القيام مع القدرة في الفرض، تكبيرة الإحرام، قراءة الفاتحة، الركوع، الاعتدال، السجود على الأعضاء السبعة، الطمأنينة التامة، التشهد الأخير والتسليم.<br><br><b>مصارف الزكاة الشرعية:</b> ثمانية حددها القرآن الكريم حصراً: الفقراء، المساكين، العاملون عليها، المؤلفة قلوبهم، في الرقاب، الغارمون، في سبيل الله، وابن السبيل.</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
               <div id="stories-page" class="page">
-                  <h2 class="page-title">📜 موسوعة قصص الأنبياء</h2>
-                  <div class="content-box"><b>آدم عليه السلام:</b> خلقه الله من طين بيديه ونفخ فيه من روحه وعلمه الأسماء كلها، وأنزله للأرض ليعمرها بالاستغفار والتوحيد.<br><br><b>نوح عليه السلام:</b> دعا قومه 950 سنة فكذبوه، فبنى السفينة العظيمة بأمر الله وأهلك الله الكافرين بالطوفان ونجى المؤمنين.</div>
+                  <h2 class="page-title">📜 موسوعة قصص الأنبياء والمرسلين</h2>
+                  <div class="content-box"><b>آدم عليه السلام (أبو البشر):</b> خلقه الله عز وجل من طين بيديه ونفخ فيه من روحه وعلمه الأسماء كلها، وأسكنه الجنة ثم نزل للأرض ليعمرها بالاستغفار والتوحيد والبناء.<br><br><b>نوح عليه السلام (شيخ المرسلين):</b> لبث في دعوة قومه 950 سنة فكذبوه واستهزأوا به، فصنع السفينة العظيمة بأمر الله وأهلك الله الكافرين بالطوفان العظيم ونجى المؤمنين.<br><br><b>إبراهيم عليه السلام (خليل الرحمن):</b> حطم الأصنام بيده فألقاه قومه في النيران فجعلها الله برداً وسلاماً عليه بيقينه، وهو من بنى الكعبة المشرفة مع ابنه إسماعيل عليه السلام.</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
               <div id="azkar-page" class="page">
                   <h2 class="page-title">📿 جامع الأذكار والتسابيح التفاعلية</h2>
-                  <div class="zkr-box"><div class="zkr-text">"أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له."</div><div class="counter" onclick="countCheck(this)">1</div></div>
-                  <div class="zkr-box"><div class="zkr-text">"رضيت بالله رباً، وبالإسلام ديناً، وبمحمد صلى الله عليه وسلم نبياً."</div><div class="counter" onclick="countCheck(this)">3</div></div>
-                  <div class="zkr-box"><div class="zkr-text">"اللهم صلّ وسلم على نبينا محمد"</div><div class="counter" onclick="countCheck(this)">10</div></div>
+                  <div class="zkr-box"><div class="zkr-text">"أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير."</div><div class="counter" onclick="countCheck(this)">1</div></div>
+                  <div class="zkr-box"><div class="zkr-text">"رضيت بالله رباً، وبالإسلام ديناً، وبمحمد صلى الله عليه وسلم نبياً ورسولاً."</div><div class="counter" onclick="countCheck(this)">3</div></div>
+                  <div class="zkr-box"><div class="zkr-text">"سبحان الله وبحمده، عدد خلقه، ورضا نفسه، وزنة عرشه، ومداد كلماته."</div><div class="counter" onclick="countCheck(this)">3</div></div>
+                  <div class="zkr-box"><div class="zkr-text">"اللهم صلّ وسلم وبارك على نبينا وسيدنا محمد وعلى آله وصحبه أجمعين"</div><div class="counter" onclick="countCheck(this)">10</div></div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
               <div id="hisn-page" class="page">
-                  <h2 class="page-title">🛡️ أدعية حصن المسلم من السنة</h2>
-                  <div class="content-box"><b>دعاء الهم والحزن:</b> "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ."<br><br><b>دعاء الخروج من البيت:</b> "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ."</div>
+                  <h2 class="page-title">🛡️ أدعية حصن المسلم من السنة المطهرة</h2>
+                  <div class="content-box"><b>دعاء الهم والحزن وضيق الديون:</b> "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ."<br><br><b>دعاء الخروج والتحصين من البيت:</b> "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." يقال له هُديت وكُفيت ووُقيت.<br><br><b>دعاء دخول المسجد المبارك:</b> "بِسْمِ اللهِ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللهِ، اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ."</div>
                   <div class="btn-back" onclick="showMainMenu()">⬅️ عودة للرئيسية</div>
               </div>
 
@@ -195,7 +206,7 @@ jobs:
       - name: Update Configuration Identity
         working-directory: quran_project
         run: |
-          sed -i 's/id="[^"]*"/id="com.dev3.quranapp"/' config.xml
+          sed -i 's/id="[^"]*"/id="com.islamic.encyclopedia2026"/' config.xml
           sed -i 's/version="[^"]*"/version="1.0.0"/' config.xml
 
       - name: Prepare and Build Cordova Android
@@ -225,7 +236,7 @@ jobs:
             -validity 10000 \
             -storepass quran2026 \
             -keypass quran2026 \
-            -dname "CN=dev3, OU=QuranAppPro, O=Dev, L=Unknown, S=Unknown, C=US"
+            -dname "CN=islamic, OU=Encyclopedia, O=Dev, L=Unknown, S=Unknown, C=US"
             
           BUILD_TOOLS_DIR=$(dirname $(find /usr/local/lib/android/sdk/build-tools/ -name "apksigner" -print -quit))
           
@@ -237,10 +248,10 @@ jobs:
             --key-pass pass:quran2026 \
             --out verified-release.apk aligned-release.apk
             
-          cp verified-release.apk $GITHUB_WORKSPACE/com.dev3.quranapp-v1.0.0.apk
+          cp verified-release.apk $GITHUB_WORKSPACE/com.islamic.encyclopedia2026-v1.0.0.apk
 
       - name: Upload Signed APK to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026
-          path: com.dev3.quranapp-v1.0.0.apk
+          path: com.islamic.encyclopedia2026-v1.0.0.apk

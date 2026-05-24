@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموسوعة الإسلامية الشاملة المطورة 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="security_core.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>✨ المَوسُوعَة الإِسلَامِيَّة الشَّامِلَة ✨</h1>
+        <p>النسخة الذهبية الكبرى الشاملة | تعمل 100% بدون إنترنت</p>
+    </div>
+
+    <div class="app-notice">
+        ⚠️ تنبيه أمني: هذه المواد مشفرة ومحمية بالبصمة الرقمية الموثقة. يمنع منعاً باتاً نسخ الأكواد أو إعادة تعديل المتون والأنظمة البرمجية تحت طائلة المساءلة التقنية.
+    </div>
+
+    <!-- بنر الإشعارات التذكيري التفاعلي الذكي داخل التطبيق -->
+    <div class="notification-banner" id="notif-banner">
+        <div class="notification-text" id="live-notif-text">📿 التذكير الفوري: صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلِّمْ تسليماً كثيراً ✨</div>
+        <button class="notification-btn" onclick="document.getElementById('notif-banner').style.display='none'">عليه الصلاة والسلام</button>
+    </div>
+
+    <div class="grid-container">
+        <!-- القوائم الطولية المنسقة بالملي للـ 6 ملفات دينية أساسية وموسعة -->
+        <a href="quran_fatiha.html" class="card">📖 1. سورة الفاتحة وتفسيرها الميسر العميق الشامل</a>
+        <a href="quran_mulk.html" class="card">📖 2. سورة الملك كاملة وأسرار تدبرها وفضائلها المنجية</a>
+        <a href="prophet_seera.html" class="card">🕌 3. موسوعة السيرة النبوية المطهرة الكبرى والميراث الشريف</a>
+        <a href="islamic_fiqh.html" class="card">⚖️ 4. كتاب الفقه الإسلامي الميسر (أحكام الطهارة والوضوء والصلاة)</a>
+        <a href="ruqyah_shariah.html" class="card">🌿 5. موسوعة الرقية الشرعية الكاملة والموسعة من الكتاب والسنة</a>
+        <a href="names_of_allah.html" class="card">💎 6. موسوعة أسماء الله الحسنى ومعانيها وجوامع فضلها وأسرارها</a>
+    </div>
+
+    <script>
+        const reminders = [
+            "📿 إنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا ✨",
+            "🕌 تذكير نبوي: مَثَلُ الَّذِي يَذْكُرُ رَبَّهُ وَالَّذِي لَا يَذْكُرُ رَبَّهُ مَثَلُ الْحَيِّ وَالْمَيِّتِ.. سبحان الله وبحمده 🌱",
+            "✨ قال ﷺ: مَنْ صَلَّى عَلَيَّ وَاحِدَةً صَلَّى اللَّهُ عَلَيْهِ بِهَا عَشْرًا.. اللهم صلّ وسلم على نبينا محمد 🌸",
+            "💎 تذكير: كلمتان خفيفتان على اللسان، ثقيلتان في الميزان، حبيبتان إلى الرحمن: سبحان الله وبحمده، سبحان الله العظيم ☀️",
+            "🛡️ حصن نفسك: لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير (حرز من الشيطان) 🌿"
+        ];
+        
+        let currentReminderIndex = 0;
+        setInterval(() => {
+            currentReminderIndex = (currentReminderIndex + 1) % reminders.length;
+            document.getElementById('live-notif-text').innerText = reminders[currentReminderIndex];
+            document.getElementById('notif-banner').style.display = 'flex';
+        }, 45000);
+    </script>
+</body>
+</html>

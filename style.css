@@ -1,0 +1,158 @@
+/* ==========================================================================
+    Supreme Islamic Encyclopedia Master Global Stylesheet 2026
+   ========================================================================== */
+
+:root {
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --text-color: #2c3e50;
+    --accent-color: #029488;
+    --gold-color: #b89047;
+    --sub-text: #7f8c8d;
+    --light-gray: #f8fafc;
+    --border-gray: #e2e8f0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 1.8;
+}
+
+/* الهيدر والعناوين الرئيسية */
+.header {
+    text-align: center;
+    margin: 20px 0 15px 0;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 15px;
+    width: 100%;
+    max-width: 550px;
+}
+
+.header h1 {
+    color: var(--accent-color);
+    font-size: 26px;
+    margin: 0 0 8px 0;
+    font-weight: 800;
+}
+
+.header p {
+    color: var(--sub-text);
+    font-size: 14.5px;
+    margin: 0;
+}
+
+/* الحاويات والصناديق الموسوعية */
+.box {
+    background: var(--card-bg);
+    border: 2px solid var(--accent-color);
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 550px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    box-sizing: border-box;
+}
+
+h2 {
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 12px;
+    text-align: center;
+    margin-top: 0;
+    font-weight: 800;
+}
+
+.section-title {
+    background: var(--light-gray);
+    padding: 12px;
+    margin-top: 25px;
+    border-right: 5px solid var(--accent-color);
+    border-left: 1px solid var(--border-gray);
+    border-top: 1px solid var(--border-gray);
+    border-bottom: 1px solid var(--border-gray);
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 16.5px;
+    color: #1a252f;
+}
+
+/* النصوص القرآنية الكبرى المتناسقة */
+.quran-text {
+    line-height: 2.4;
+    font-size: 23px;
+    margin-top: 15px;
+    text-align: center;
+    color: #1a252f;
+    font-family: 'Traditional Arabic', Georgia, serif;
+    font-weight: bold;
+    background-color: var(--light-gray);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border-gray);
+}
+
+.content-block {
+    line-height: 1.9;
+    font-size: 16px;
+    margin-top: 12px;
+    text-align: justify;
+    color: #34495e;
+}
+
+/* الأزرار والقوائم الطولية المنسقة تحت بعضها */
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 550px;
+    margin-top: 5px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 2px solid var(--accent-color);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    color: var(--accent-color);
+    font-size: 18px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(2, 148, 136, 0.02);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.card:active {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    transform: scale(0.97);
+}
+
+/* أزرار العودة للمستعرض */
+.btn-back {
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0 auto;
+    background: var(--accent-color);
+    color: #fff;
+    padding: 12px 26px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-back:active {
+    transform: scale(0.96);
+}

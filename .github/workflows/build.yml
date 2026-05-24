@@ -1,4 +1,4 @@
-name: Cordova Pure Android Production Update 2026
+name: Cordova Pure Android Signed Production 2026
 
 on:
   push:
@@ -13,7 +13,7 @@ env:
   CORDOVA_APP_NAME: "Al-Mawsooah"
 
 jobs:
-  compile_apk:
+  compile_signed_apk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
@@ -52,22 +52,29 @@ jobs:
           sed -i "s/version=\"[^\"]*\"/version=\"$ANDROID_BUILD_VERSION_NAME\"/" config.xml
           sed -i "s/<widget/<widget android-versionCode=\"$ANDROID_BUILD_VERSION_CODE\"/" config.xml
 
-      - name: Setup Android Compilation Layer
+      - name: Setup Android platform layer
         working-directory: quran_project
         run: |
           cordova platform add android || true
           cordova build android --release -- --packageType=apk
 
-      - name: Move and Prepare Final Target APK
+      - name: Inject Cryptographic Keystore and APKSigner
+        working-directory: quran_project
         run: |
-          APK_RAW=$(find quran_project/platforms/android/ -name "*.apk" -print -quit)
-          if [ ! -z "$APK_RAW" ]; then
-            cp "$APK_RAW" $GITHUB_WORKSPACE/Al-Mawsooah-v3.2.0.apk
-          else
-            exit 1
-          fi
+          RAW_APK=$(find platforms/android/ -name "*.apk" -print -quit)
+          cd $(dirname "$RAW_APK")
+          
+          # توليد مفتاح أمان رقمي معتمد لفك قفل الحزمة على هواتف أندرويد
+          keytool -genkeypair -v -keystore release.keystore -alias release_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass target2026 -keypass target2026 -dname "CN=islamic, OU=Dev, O=App, L=Unknown, S=Unknown, C=US"
+          
+          BUILD_TOOLS=$(dirname $(find /usr/local/lib/android/sdk/build-tools/ -name "apksigner" -print -quit))
+          
+          $BUILD_TOOLS/zipalign -v 4 $(basename "$RAW_APK") aligned-release.apk
+          $BUILD_TOOLS/apksigner sign --ks release.keystore --ks-key-alias release_alias --ks-pass pass:target2026 --key-pass pass:target2026 --out signed-release.apk aligned-release.apk
+          
+          cp signed-release.apk $GITHUB_WORKSPACE/Al-Mawsooah-v3.2.0.apk
 
-      - name: Upload Finished APK Artifact
+      - name: Upload Verified APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026

@@ -11,11 +11,9 @@ env:
   ANDROID_BUILD_VERSION_NAME: "3.2.0"
   CORDOVA_APP_IDENTIFIER: "com.islamic.encyclopedia2026"
   CORDOVA_APP_NAME: "Al-Mawsooah"
-  ADMOB_BANNER_ID: "ca-app-pub-1634388473102203/9332526734"
-  ADMOB_APP_ID: "ca-app-pub-1634388473102203~1142668223"
 
 jobs:
-  compile_and_update_apk:
+  compile_apk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
@@ -40,25 +38,12 @@ jobs:
           cordova create quran_project $CORDOVA_APP_IDENTIFIER "$CORDOVA_APP_NAME"
           cd quran_project
           rm -rf www/*
-          
-          # نسخ كافة ملفاتك الـ 9 المتواجدة في جذر المستودع مباشرة وبدون تعقيد ومجلدات
           cp ../*.html www/ || true
           cp ../*.js www/ || true
           cp ../*.css www/ || true
-          cp ../*.png www/ || true
-          cp ../*.jpg www/ || true
-          
-          # ربط نظام الإعلانات الصافي وحقنه بأسفل الواجهة بالملي
           if [ -f "www/index.html" ]; then
-            sed -i "s/<\/head>/<script src=\"security_core.js\"><\/script><script>document.addEventListener('deviceready', () => { admob.banner.show({ id: '$ADMOB_BANNER_ID' }); }, false);<\/script><\/head>/" www/index.html
-            sed -i "s/<\/head>/<link rel=\"stylesheet\" href=\"style.css\"><\/head>/" www/index.html
+            sed -i 's/<\/head>/<script src="security_core.js"><\/script><link rel="stylesheet" href="style.css"><\/head>/' www/index.html
           fi
-
-      - name: Inject AdMob Plus Module Plugins
-        working-directory: quran_project
-        run: |
-          cordova plugin add admob-plus-cordova --variable APP_ID_ANDROID="$ADMOB_APP_ID" || true
-          cordova plugin add cordova-plugin-privacyscreen || true
 
       - name: Update Global Identity Manifest
         working-directory: quran_project
@@ -76,10 +61,14 @@ jobs:
       - name: Move and Prepare Final Target APK
         run: |
           APK_RAW=$(find quran_project/platforms/android/ -name "*.apk" -print -quit)
-          cp "$APK_RAW" $GITHUB_WORKSPACE/com.islamic.encyclopedia2026-v3.2.0.apk
+          if [ ! -z "$APK_RAW" ]; then
+            cp "$APK_RAW" $GITHUB_WORKSPACE/Al-Mawsooah-v3.2.0.apk
+          else
+            exit 1
+          fi
 
       - name: Upload Finished APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026
-          path: com.islamic.encyclopedia2026-v3.2.0.apk
+          path: Al-Mawsooah-v3.2.0.apk

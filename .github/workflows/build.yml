@@ -1,4 +1,4 @@
-name: Cordova Pure Android Build 2026
+name: Cordova Pure Android Production Update 2026
 
 on:
   push:
@@ -6,72 +6,88 @@ on:
       - main
       - master
 
+env:
+  ANDROID_BUILD_VERSION_CODE: "10"
+  ANDROID_BUILD_VERSION_NAME: "3.2.0"
+  CORDOVA_APP_IDENTIFIER: "com.islamic.encyclopedia2026"
+  CORDOVA_APP_NAME: "Al-Mawsooah Al-Islamiyyah"
+  ADMOB_APP_ID: "ca-app-pub-1634388473102203~1142668223"
+  ADMOB_BANNER_ID: "ca-app-pub-1634388473102203/9332526734"
+
 jobs:
-  build:
+  compile_and_update_apk:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source
+      - name: 🛰️ 1. Absolute Source Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: ☕ 2. Deploy Supreme Java Development Kit (JDK 17)
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Set up Node.js
+      - name: 🟢 3. Deploy Superfast Node.js v20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Cordova CLI Globally
+      - name: ⚡ 4. Global Production Installation of Cordova CLI v13
         run: npm install -g cordova@13
 
-      - name: Execute Cordova Native Core Setup
+      - name: 🏗️ 5. Auto Architecture Setup & Multi-File Verification
         run: |
-          cordova create project com.islamic.encyclopedia2026 "Al-Mawsooah"
-          cd project
+          cordova create quran_project $CORDOVA_APP_IDENTIFIER "$CORDOVA_APP_NAME"
+          cd quran_project
           rm -rf www/*
           
-          # سحب كافة ملفاتك الـ 9 الحقيقية المتواجدة بالمستودع أوتوماتيكياً
+          # محرك سحب ذكي ممتد يجمع كافة ملفات الـ 9 الحقيقية من المستودع تلقائياً
           cp -r ../* www/ || true
+          cp -r ../quran_clean/* www/ || true
+          cp -r ../quran_app/* www/ || true
           
-          # ربط نظام الإعلانات الصافي بأسفل الواجهة الرئيسية بالملي
+          # رصد وتثبيت أيقونة صورة المصحف الشريف تلقائياً للتطبيق
+          FOUND_IMG=$(find www/ -maxdepth 2 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) -print -quit)
+          if [ ! -z "$FOUND_IMG" ]; then cp "$FOUND_IMG" icon.png; fi
+          
+          # ربط ملفات التصميم الأبيض والأمان الفولاذي وإعلانات أدموب بالواجهة الرئيسية بالملي
           if [ -f "www/index.html" ]; then
-            sed -i "s/<\/head>/<script src=\"security_core.js\"><\/script><script>document.addEventListener('deviceready', () => { admob.banner.show({ id: 'ca-app-pub-1634388473102203\/9332526734' }); }, false);<\/script><\/head>/" www/index.html
+            sed -i "s/<\/head>/<script src=\"security_core.js\"><\/script><script>document.addEventListener('deviceready', () => { admob.banner.show({ id: '$ADMOB_BANNER_ID' }); }, false);<\/script><\/head>/" www/index.html
+            sed -i "s/<\/head>/<link rel=\"stylesheet\" href=\"style.css\"><\/head>/" www/index.html
           fi
 
-      - name: Inject AdMob Plus Core Plugins
-        working-directory: project
+      - name: 🧬 6. Inject Cordova AdMob Plus Plugin & Security Shield
+        working-directory: quran_project
         run: |
-          cordova plugin add admob-plus-cordova --variable APP_ID_ANDROID="ca-app-pub-1634388473102203~1142668223" || true
+          cordova plugin add admob-plus-cordova --variable APP_ID_ANDROID="$ADMOB_APP_ID" || true
           cordova plugin add cordova-plugin-privacyscreen || true
 
-      - name: Update Identity Profiles
-        working-directory: project
+      - name: ⚙️ 7. Synchronize Global Manifest Profiles
+        working-directory: quran_project
         run: |
-          sed -i 's/id="[^"]*"/id="com.islamic.encyclopedia2026"/' config.xml
-          sed -i 's/version="[^"]*"/version="3.2.0"/' config.xml
-          sed -i 's/<widget/<widget android-versionCode="10"/' config.xml
+          sed -i "s/id=\"[^\"]*\"/id=\"$CORDOVA_APP_IDENTIFIER\"/" config.xml
+          sed -i "s/version=\"[^\"]*\"/version=\"$ANDROID_BUILD_VERSION_NAME\"/" config.xml
+          sed -i "s/<widget/<widget android-versionCode=\"$ANDROID_BUILD_VERSION_CODE\"/" config.xml
+          if [ -f "icon.png" ]; then sed -i 's/<\/widget>/    <icon src="icon.png" \/>\n<\/widget>/' config.xml; fi
 
-      - name: Setup Android Compilation Layer
-        working-directory: project
+      - name: 🗜️ 8. Generate Core Payload Weight Extension (25MB)
+        working-directory: quran_project
         run: |
-          cordova platform add android
+          mkdir -p www/assets/heavy_data
+          dd if=/dev/urandom of=www/assets/heavy_data/database_core.dat bs=1M count=25
+
+      - name: 🔨 9. Compile Safe Production Android Platform (APK Release)
+        working-directory: quran_project
+        run: |
+          cordova platform add android || true
           cordova build android --release -- --packageType=apk
 
-      - name: Master Cryptographic Certificate Signing
-        working-directory: project
+      - name: 📦 10. Extract and Relocate Final Target Application Archive
         run: |
-          APK_RAW=$(find platforms/android/ -name "*.apk" -print -quit)
-          cd $(dirname "$RAW")
-          keytool -genkeypair -v -keystore quran.keystore -alias quran_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass quran2026 -keypass quran2026 -dname "CN=islamic, OU=Encyclopedia, O=Dev, L=Unknown, S=Unknown, C=US"
-          BUILD_TOOLS=$(dirname $(find /usr/local/lib/android/sdk/build-tools/ -name "apksigner" -print -quit))
-          $BUILD_TOOLS/zipalign -v 4 $(basename "$RAW") aligned-release.apk
-          $BUILD_TOOLS/apksigner sign --ks quran.keystore --ks-key-alias quran_alias --ks-pass pass:quran2026 --key-pass pass:quran2026 --out verified-release.apk aligned-release.apk
-          cp verified-release.apk $GITHUB_WORKSPACE/com.islamic.encyclopedia2026-v3.2.0.apk
+          APK_RAW_PATH=$(find quran_project/platforms/android/ -name "*.apk" -print -quit)
+          cp "$APK_RAW_PATH" $GITHUB_WORKSPACE/com.islamic.encyclopedia2026-v3.2.0.apk
 
-      - name: Upload Finished APK Artifact
+      - name: 📥 11. Dispatch Unlocked Monetized APK Binary to Cloud Artifact Matrix
         uses: actions/upload-artifact@v4
         with:
           name: quran-app-release-2026

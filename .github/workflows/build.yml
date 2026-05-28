@@ -1,81 +1,264 @@
-name: Cordova Pure Android Signed Production 2026
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1B5E20">
+    <title>روائع الإسلام</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
+        :root { --primary:#1B5E20; --primary-light:#E8F5E9; --gold:#C9A227; --text:#212121; --text-secondary:#616161; --bg:#FAFAFA; --card:#FFFFFF; --shadow:0 2px 12px rgba(0,0,0,0.06); --radius:18px; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; outline:none; }
+        body { font-family:'Noto Naskh Arabic','Segoe UI',Tahoma,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; padding-bottom:70px; }
+        #splash-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:linear-gradient(135deg,#1B5E20 0%,#2E7D32 100%); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.5s ease; }
+        #splash-screen.hidden { opacity:0; pointer-events:none; }
+        .splash-logo { font-size:72px; margin-bottom:20px; animation:pulse 2s infinite; }
+        .splash-title { color:white; font-size:28px; font-weight:700; margin-bottom:10px; }
+        .splash-subtitle { color:rgba(255,255,255,0.8); font-size:14px; }
+        .splash-loading { width:200px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; margin-top:30px; overflow:hidden; }
+        .splash-loading-bar { width:0%; height:100%; background:white; border-radius:2px; animation:loading 2s ease forwards; }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+        @keyframes loading { 0%{width:0%} 100%{width:100%} }
+        .app-header { background:linear-gradient(135deg,#1B5E20 0%,#2E7D32 100%); color:white; padding:28px 20px 35px; text-align:center; border-radius:0 0 30px 30px; box-shadow:0 4px 20px rgba(27,94,32,0.25); position:relative; z-index:10; }
+        .app-header h1 { font-size:26px; font-weight:700; margin-bottom:6px; letter-spacing:0.5px; }
+        .app-header p { font-size:13px; opacity:0.9; font-weight:400; }
+        .welcome-bar { background:var(--card); margin:-15px 15px 20px; padding:18px; border-radius:var(--radius); box-shadow:var(--shadow); text-align:center; position:relative; z-index:11; border:1px solid #E0E0E0; }
+        .welcome-bar p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+        .sections-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 15px; margin-bottom:20px; }
+        .section-btn { background:var(--card); border:1px solid #EEEEEE; border-radius:var(--radius); padding:18px 10px; text-align:center; cursor:pointer; transition:all 0.25s ease; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+        .section-btn:active { transform:scale(0.96); box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+        .section-btn.active { border-color:var(--primary); background:var(--primary-light); }
+        .section-btn::before { content:''; position:absolute; top:0; right:0; width:4px; height:100%; background:var(--primary); opacity:0; transition:opacity 0.2s; }
+        .section-btn.active::before { opacity:1; }
+        .section-icon { font-size:32px; margin-bottom:8px; display:block; }
+        .section-title { font-size:13px; font-weight:700; color:var(--text); line-height:1.4; }
+        .content-view { display:none; padding:0 15px 20px; animation:fadeIn 0.35s ease; }
+        .content-view.active { display:block; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        .section-header { display:flex; align-items:center; gap:10px; margin-bottom:18px; padding-bottom:12px; border-bottom:2px solid var(--primary-light); }
+        .section-header h2 { font-size:20px; color:var(--primary); font-weight:700; }
+        .back-btn { background:var(--primary-light); color:var(--primary); border:none; padding:8px 16px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
+        .back-btn:active { background:#C8E6C9; }
+        .card { background:var(--card); border-radius:var(--radius); padding:20px; margin-bottom:14px; box-shadow:var(--shadow); border:1px solid #F5F5F5; position:relative; }
+        .card h3 { font-size:16px; color:var(--primary); margin-bottom:10px; font-weight:700; display:flex; align-items:center; gap:8px; }
+        .card p,.card .text { font-size:15px; color:var(--text-secondary); line-height:1.85; }
+        .card .source { font-size:12px; color:#9E9E9E; margin-top:10px; text-align:left; direction:ltr; }
+        .gold-border { border-right:4px solid var(--gold); }
+        .green-border { border-right:4px solid var(--primary); }
+        .blue-border { border-right:4px solid #1565C0; }
+        .purple-border { border-right:4px solid #6A1B9A; }
+        .orange-border { border-right:4px solid #E65100; }
+        .red-border { border-right:4px solid #C62828; }
+        .teal-border { border-right:4px solid #00695C; }
+        .tasbih-wrap { text-align:center; padding:10px 0 20px; }
+        .dhikr-tabs { display:flex; gap:8px; overflow-x:auto; padding:5px 0 15px; margin-bottom:5px; scrollbar-width:none; }
+        .dhikr-tabs::-webkit-scrollbar { display:none; }
+        .dhikr-tab { flex-shrink:0; padding:8px 16px; background:#EEEEEE; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer; border:2px solid transparent; color:var(--text-secondary); }
+        .dhikr-tab.active { background:var(--primary); color:white; border-color:var(--primary); }
+        .tasbih-display { width:190px; height:190px; border-radius:50%; background:linear-gradient(145deg,#1B5E20,#2E7D32); margin:0 auto 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; box-shadow:0 8px 30px rgba(27,94,32,0.3); cursor:pointer; position:relative; transition:transform 0.1s; }
+        .tasbih-display:active { transform:scale(0.94); }
+        .tasbih-count { font-size:52px; font-weight:700; line-height:1; }
+        .tasbih-label { font-size:13px; opacity:0.85; margin-top:6px; }
+        .tasbih-name { font-size:20px; color:var(--primary); font-weight:700; margin-bottom:18px; }
+        .tasbih-controls { display:flex; gap:12px; justify-content:center; }
+        .btn { padding:12px 24px; border:none; border-radius:24px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+        .btn-main { background:var(--primary); color:white; box-shadow:0 4px 12px rgba(27,94,32,0.25); }
+        .btn-sec { background:#EEEEEE; color:var(--text); }
+        .btn:active { transform:scale(0.95); }
+        .hint { font-size:12px; color:#9E9E9E; margin-top:18px; }
+        #ad-container { position:fixed; bottom:0; left:0; right:0; height:60px; background:var(--card); border-top:1px solid #EEEEEE; z-index:9999; display:flex; align-items:center; justify-content:center; box-shadow:0 -2px 10px rgba(0,0,0,0.04); }
+        .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(100px); background:#333; color:white; padding:12px 24px; border-radius:30px; font-size:14px; z-index:10000; opacity:0; transition:all 0.3s ease; pointer-events:none; white-space:nowrap; }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .tag { display:inline-block; padding:4px 12px; border-radius:12px; font-size:11px; font-weight:700; margin-top:10px; background:var(--primary-light); color:var(--primary); }
+        .tag-gold { background:#FFF8E1; color:#F57F17; }
+        .tag-blue { background:#E3F2FD; color:#1565C0; }
+        .tag-purple { background:#F3E5F5; color:#6A1B9A; }
+    </style>
+</head>
+<body>
 
-on:
-  push:
-    branches:
-      - main
-      - master
+<div id="splash-screen">
+    <div class="splash-logo">☪️</div>
+    <div class="splash-title">روائع الإسلام</div>
+    <div class="splash-subtitle">رفيق المغترب العربي في أوروبا</div>
+    <div class="splash-loading"><div class="splash-loading-bar"></div></div>
+</div>
 
-env:
-  ANDROID_BUILD_VERSION_CODE: "10"
-  ANDROID_BUILD_VERSION_NAME: "3.2.0"
-  CORDOVA_APP_IDENTIFIER: "com.islamic.encyclopedia2026"
-  CORDOVA_APP_NAME: "Al-Mawsooah"
+<header class="app-header">
+    <h1>☪️ روائع الإسلام</h1>
+    <p>رفيق المغترب العربي في أوروبا</p>
+</header>
 
-jobs:
-  compile_signed_apk:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
+<div class="welcome-bar"><p>🌍 موسوعة إسلامية شاملة تضم 8 أقسام ذهبية لإثراء روحك في الغربة</p></div>
 
-      - name: Deploy Java Environment (JDK 17)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+<div class="sections-grid" id="mainGrid">
+    <div class="section-btn" onclick="openSection('sira')"><span class="section-icon">📖</span><div class="section-title">روائع السيرة<br>والقصص</div></div>
+    <div class="section-btn" onclick="openSection('tasbih')"><span class="section-icon">📿</span><div class="section-title">المسبحة<br>والأذكار</div></div>
+    <div class="section-btn" onclick="openSection('wisdom')"><span class="section-icon">💡</span><div class="section-title">درر وحكم<br>إسلامية</div></div>
+    <div class="section-btn" onclick="openSection('fiqh')"><span class="section-icon">⚖️</span><div class="section-title">فقه المغترب<br>السريع</div></div>
+    <div class="section-btn" onclick="openSection('prophets')"><span class="section-icon">🌟</span><div class="section-title">قصص الأنبياء<br>وعِبر</div></div>
+    <div class="section-btn" onclick="openSection('tazkiyah')"><span class="section-icon">🕊️</span><div class="section-title">رقائق وتزكية<br>النفوس</div></div>
+    <div class="section-btn" onclick="openSection('faq')"><span class="section-icon">❓</span><div class="section-title">سؤال وجواب<br>فتاوى</div></div>
+    <div class="section-btn" onclick="openSection('fadael')"><span class="section-icon">🏆</span><div class="section-title">فضائل الأعمال<br>والأجور</div></div>
+</div>
 
-      - name: Deploy Node.js Environment v20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+<div id="sira" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>📖 روائع السيرة والقصص</h2></div>
+    <div class="card green-border"><h3>🌙 البعثة النبوية</h3><p class="text">بعث الله محمداً ﷺ في مكة وهو في الأربعين من عمره. كان أول ما بدئ به الوحي في غار حراء بقراءة <b>"اقرأ باسم ربك الذي خلق"</b>.</p></div>
+    <div class="card green-border"><h3>🤝 الهجرة النبوية</h3><p class="text">هاجر النبي ﷺ إلى المدينة سنة 622م بعد 13 عاماً من الدعوة. بنى المسجد النبوي وآخى بين المهاجرين والأنصار.</p></div>
+    <div class="card green-border"><h3>✌️ صلح الحديبية</h3><p class="text">عام 6 هـ، خرج النبي ﷺ لأداء العمرة فمنعه قريش. تمّ الصلح على شروط يظهرها الظاهر مهينة، لكنها كانت نصراً مبيناً.</p></div>
+    <div class="card green-border"><h3>🏆 فتح مكة</h3><p class="text">في رمضان 8 هـ، دخل النبي ﷺ مكة بجيش 10,000 مقاتل. عفا عن قريش قائلاً: <b>"اذهبوا فأنتم الطلقاء"</b>.</p></div>
+    <div class="card green-border"><h3>🕋 حجة الوداع</h3><p class="text">في 10 هـ، خطب النبي ﷺ في الناس بمنى: <b>"أيها الناس اسمعوا قولي فإني لا أدري لعلي لا ألقاكم بعد عامي هذا"</b>.</p></div>
+    <div class="card green-border"><h3>⚖️ العدل مع اليهودي</h3><p class="text">جاء رجل يهودي يشتكي إلى النبي ﷺ من ظلم علي بن أبي طالب. قضى النبي ﷺ لليهودي ضد علي رغم محبته له.</p></div>
+    <div class="card green-border"><h3>💚 الرحمة مع الأسير</h3><p class="text">يوم بدر، أمر النبي ﷺ بإحسان الأسير. قال للمسلمين: <b>"أحسنوا إليهم"</b>. كان أبو بكر يُطعمهم خبزاً وعلي لحماً.</p></div>
+</div>
 
-      - name: Install Cordova CLI
-        run: npm install -g cordova@13
+<div id="tasbih" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>📿 المسبحة الإلكترونية الذكية</h2></div>
+    <div class="tasbih-wrap">
+        <div class="dhikr-tabs" id="dhikrTabs">
+            <div class="dhikr-tab active" onclick="setDhikr(0)">سبحان الله</div>
+            <div class="dhikr-tab" onclick="setDhikr(1)">الحمد لله</div>
+            <div class="dhikr-tab" onclick="setDhikr(2)">الله أكبر</div>
+            <div class="dhikr-tab" onclick="setDhikr(3)">لا إله إلا الله</div>
+            <div class="dhikr-tab" onclick="setDhikr(4)">أستغفر الله</div>
+            <div class="dhikr-tab" onclick="setDhikr(5)">الصلاة على النبي</div>
+        </div>
+        <div class="tasbih-name" id="dhikrName">سبحان الله</div>
+        <div class="tasbih-display" id="tasbihCircle" onclick="increment()">
+            <div class="tasbih-count" id="counter">0</div>
+            <div class="tasbih-label">انقر للتسبيح</div>
+        </div>
+        <div class="tasbih-controls">
+            <button class="btn btn-sec" onclick="resetCounter()">🔄 تصفير</button>
+            <button class="btn btn-main" onclick="increment()">➕ تسبيح</button>
+        </div>
+        <p class="hint">💡 المسبحة تهتز ذكياً عند الوصول إلى 33 و100</p>
+    </div>
+</div>
 
-      - name: Auto Setup App Core Container
-        run: |
-          cordova create quran_project $CORDOVA_APP_IDENTIFIER "$CORDOVA_APP_NAME"
-          cd quran_project
-          rm -rf www/*
-          cp ../*.html www/ || true
-          cp ../*.js www/ || true
-          cp ../*.css www/ || true
-          if [ -f "www/index.html" ]; then
-            sed -i 's/<\/head>/<script src="security_core.js"><\/script><link rel="stylesheet" href="style.css"><\/head>/' www/index.html
-          fi
+<div id="wisdom" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>💡 درر إسلامية وحكم نبوية</h2></div>
+    <div class="card gold-border"><h3>💎 النية</h3><p class="text">"إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى"</p><div class="source">📚 متفق عليه</div></div>
+    <div class="card gold-border"><h3>💎 لسان المؤمن</h3><p class="text">"من كان يؤمن بالله واليوم الآخر فليقل خيراً أو ليصمت"</p><div class="source">📚 متفق عليه</div></div>
+    <div class="card gold-border"><h3>💎 حب الأخ</h3><p class="text">"لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه"</p><div class="source">📚 متفق عليه</div></div>
+    <div class="card gold-border"><h3>💎 طلب العلم</h3><p class="text">"من سلك طريقاً يلتمس فيه علماً سهل الله له طريقاً إلى الجنة"</p><div class="source">📚 مسلم</div></div>
+    <div class="card gold-border"><h3>💎 طلب العفو</h3><p class="text">"والله لأستغفر الله في كل يوم سبعين مرة" — أبو بكر الصديق</p><div class="source">📚 البخاري</div></div>
+    <div class="card gold-border"><h3>💎 حسن الخلق</h3><p class="text">"إن من أحبكم إليّ وأقربكم مني مجلساً يوم القيامة أحاسنكم أخلاقاً"</p><div class="source">📚 الترمذي</div></div>
+    <div class="card gold-border"><h3>💎 الصدقة الجارية</h3><p class="text">"إذا مات ابن آدم انقطع عمله إلا من ثلاث: صدقة جارية، أو علم ينتفع به، أو ولد صالح يدعو له"</p><div class="source">📚 مسلم</div></div>
+    <div class="card gold-border"><h3>💎 التبسم</h3><p class="text">"تبسمك في وجه أخيك صدقة"</p><div class="source">📚 الترمذي</div></div>
+    <div class="card gold-border"><h3>💎 الدنيا والآخرة</h3><p class="text">"الدنيا سجن المؤمن وجنة الكافر"</p><div class="source">📚 مسلم</div></div>
+    <div class="card gold-border"><h3>💎 بر الوالدين</h3><p class="text">"رضا الرب في رضا الوالد، وسخط الرب في سخط الوالد"</p><div class="source">📚 الترمذي</div></div>
+</div>
 
-      - name: Update Global Identity Manifest
-        working-directory: quran_project
-        run: |
-          sed -i "s/id=\"[^\"]*\"/id=\"$CORDOVA_APP_IDENTIFIER\"/" config.xml
-          sed -i "s/version=\"[^\"]*\"/version=\"$ANDROID_BUILD_VERSION_NAME\"/" config.xml
-          sed -i "s/<widget/<widget android-versionCode=\"$ANDROID_BUILD_VERSION_CODE\"/" config.xml
+<div id="fiqh" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>⚖️ فقه المغترب السريع</h2></div>
+    <div class="card blue-border"><h3>❓ اتجاه القبلة في أوروبا</h3><p class="text">القبلة في أوروبا تجاه الجنوب الشرقي تقريباً. استخدم تطبيقات البوصلة الدقيقة. في شمال أوروبا يميل اتجاه القبلة أكثر للجنوب.</p><span class="tag tag-blue">🧭 القبلة</span></div>
+    <div class="card blue-border"><h3>❓ الجمع بين الصلوات بسبب العمل</h3><p class="text">الجمع لعذر العمل مباح عند الحنفية والمالكية بشروط. عند الشافعية والحنابلة يشترط عذر السفر. الأفضل استغلال فترات الراحة.</p><span class="tag tag-blue">🕐 الصلاة</span></div>
+    <div class="card blue-border"><h3>❓ أكل اللحم المذبوح في أوروبا</h3><p class="text">إذا كان الذبح على الطريقة الإسلامية أو الكشير فهو حلال. أما المجهول فالأحوط تركه. ابحث عن متاجر Halal في مدينتك.</p><span class="tag tag-blue">🍖 الطعام</span></div>
+    <div class="card blue-border"><h3>❓ الصوم في النهار الطويل</h3><p class="text">في الصيف يصل النهار لـ 18-20 ساعة. الجمهور على وجوب الصيام من الفجر إلى الغروب المحلي. من أعسر فله الرخصة بالإفطار والقضاء.</p><span class="tag tag-blue">🌙 رمضان</span></div>
+    <div class="card blue-border"><h3>❓ صلاة الجمعة في البيت</h3><p class="text">الجمعة شعار إسلامي جماعي يجب أداؤها في مسجد. إذا كان المسجد بعيداً جداً أو لا يوجد، صل الظهر ركعتين في البيت.</p><span class="tag tag-blue">🕌 الجمعة</span></div>
+    <div class="card blue-border"><h3>❓ التعامل بالبنوك الربوية</h3><p class="text">فتح حساب جاري (current account) جائز للضرورة. أما الودائع ذات الفائدة فهي ربا محرم. ابحث عن بنوك إسلامية أو Zero interest.</p><span class="tag tag-blue">🏦 المعاملات</span></div>
+    <div class="card blue-border"><h3>❓ التعامل مع زملاء غير المسلمين</h3><p class="text">عاملهم بالحسنى والأخلاق الفاضلة. كن قدوة حسنة للإسلام بأخلاقك. "لا يسب أحدكم إلى أمه" - تجنب المواضيع الحساسة.</p><span class="tag tag-blue">🤝 المعاشرة</span></div>
+</div>
 
-      - name: Setup Android platform layer
-        working-directory: quran_project
-        run: |
-          cordova platform add android || true
-          cordova build android --release -- --packageType=apk
+<div id="prophets" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>🌟 قصص الأنبياء وعِبر</h2></div>
+    <div class="card purple-border"><h3>🍎 آدم عليه السلام</h3><p class="text">خلقه الله بيده وأسجد له الملائكة. عصى بأكل من الشجرة فتاب عليه. <b>العبرة:</b> التوبة مقبولة دائماً.</p><span class="tag tag-purple">🔄 التوبة</span></div>
+    <div class="card purple-border"><h3>🚢 نوح عليه السلام</h3><p class="text">دعا قومه 950 سنة، لم يؤمن إلا قليل. بنى السفينة بالأمر الإلهي فنجا مع المؤمنين. <b>العبرة:</b> الصبر على الدعوة.</p><span class="tag tag-purple">⏳ الصبر</span></div>
+    <div class="card purple-border"><h3>🔥 إبراهيم عليه السلام</h3><p class="text">كسر الأصنام وصُلب في النار فجعلها عليه برداً وسلاماً. <b>العبرة:</b> التوكل على الله يقلب المستحيل.</p><span class="tag tag-purple">🤲 التوكل</span></div>
+    <div class="card purple-border"><h3>🌊 موسى عليه السلام</h3><p class="text">ألقي في اليمّ ونشأ في قصر فرعون. خرج ببني إسرائيل فانشق البحر. <b>العبرة:</b> الله يمهّد الطريق لمن يثبت.</p><span class="tag tag-purple">💪 الثبات</span></div>
+    <div class="card purple-border"><h3>👶 عيسى عليه السلام</h3><p class="text">ولد من أم بكراً بمعجزة إلهية. كلّم الناس في المهد وشفى الأكمه والأبرص. <b>العبرة:</b> قدرة الله لا حدود لها.</p><span class="tag tag-purple">✨ المعجزات</span></div>
+    <div class="card purple-border"><h3>☪️ محمد ﷺ</h3><p class="text">الخاتم النبيين، بعثه الله رحمة للعالمين. حمل الرسالة رغم الأذى ففتح الله عليه مكة والعالم. <b>العبرة:</b> الإخلاص والثبات ينصران دائماً.</p><span class="tag tag-purple">🕊️ الرحمة</span></div>
+</div>
 
-      - name: Inject Cryptographic Keystore and APKSigner
-        working-directory: quran_project
-        run: |
-          RAW_APK=$(find platforms/android/ -name "*.apk" -print -quit)
-          cd $(dirname "$RAW_APK")
-          
-          # توليد مفتاح أمان رقمي معتمد لفك قفل الحزمة على هواتف أندرويد
-          keytool -genkeypair -v -keystore release.keystore -alias release_alias -keyalg RSA -keysize 2048 -validity 10000 -storepass target2026 -keypass target2026 -dname "CN=islamic, OU=Dev, O=App, L=Unknown, S=Unknown, C=US"
-          
-          BUILD_TOOLS=$(dirname $(find /usr/local/lib/android/sdk/build-tools/ -name "apksigner" -print -quit))
-          
-          $BUILD_TOOLS/zipalign -v 4 $(basename "$RAW_APK") aligned-release.apk
-          $BUILD_TOOLS/apksigner sign --ks release.keystore --ks-key-alias release_alias --ks-pass pass:target2026 --key-pass pass:target2026 --out signed-release.apk aligned-release.apk
-          
-          cp signed-release.apk $GITHUB_WORKSPACE/Al-Mawsooah-v3.2.0.apk
+<div id="tazkiyah" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>🕊️ رقائق وتزكية النفوس</h2></div>
+    <div class="card teal-border"><h3>🌙 فضل قيام الليل</h3><p class="text">"في الليل سَكَنٌ وهُدًى" — قيام الليل سرّ المحبين. فيه تفريج الكربات ونزول الرحمات. النبي ﷺ كان يقوم حتى تتورم قدماه.</p><span class="tag">🌃 تهجد</span></div>
+    <div class="card teal-border"><h3>🔄 التوبة النصوح</h3><p class="text">"إن الله يفرح بتوبة عبده كما يفرح أحدكم بضالته إذا وجدها" — التوبة تُمحى ما قبلها، ولا ييأس من رحمة الله أحد.</p><span class="tag">❤️ مغفرة</span></div>
+    <div class="card teal-border"><h3>🙏 الخشوع في الصلاة</h3><p class="text">"الذين هم في صلاتهم خاشعون" — الخشوع حضور القلب بين يدي الله. اجعل كل صلاة وداعاً محتملاً، فلا تدري أتدرك الصلاة القادمة أم لا.</p><span class="tag">🕌 حضور</span></div>
+    <div class="card teal-border"><h3>⚰️ ذكر الموت</h3><p class="text">"أكثروا من ذكر هادم اللذات" — الموت يُذكّر بحقيقة الحياة. من عاش بذكر الموت عاش حراً، ومن نسي الموت عاش أسير شهواته.</p><span class="tag">🤍 زهد</span></div>
+    <div class="card teal-border"><h3>😊 حسن الخلق</h3><p class="text">"إنما بعثت لأتمم مكارم الأخلاق" — حسن الخلق أثقل شيء في الميزان. ابتسم، ولا تغتاب، ولا تحقد، وكن سهل الظهر.</p><span class="tag">🌸 مكارم</span></div>
+</div>
 
-      - name: Upload Verified APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: quran-app-release-2026
-          path: Al-Mawsooah-v3.2.0.apk
+<div id="faq" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>❓ سؤال وجواب (فتاوى تهمك)</h2></div>
+    <div class="card orange-border"><h3>❓ هل يجوز صلاة النافلة في المكتب؟</h3><p class="text">نعم، صلاة النافلة (الضحى، التطوع) يجوز أداؤها في أي مكان طاهر، حتى في المكتب أو السيارة. أما الفريضة فيجب أداؤها في مسجد إن أمكن.</p><span class="tag tag-gold">🕐 نافلة</span></div>
+    <div class="card orange-border"><h3>❓ ما حكم التأخير عن صلاة الجماعة؟</h3><p class="text">الحضور في أول الوقت أفضل. إذا دخلت والإمام في الركعة الأولى أو الثانية فأدركته. إذا فاتتك الجماعة صلّ وحدك.</p><span class="tag tag-gold">🕌 جماعة</span></div>
+    <div class="card orange-border"><h3>❓ هل يجوز الوضوء بماء البحر؟</h3><p class="text">نعم، ماء البحر طاهر مطهر بالإجماع. قال ﷺ: "هو الطهور ماؤه، الحل ميتته" — يجوز الوضوء والغسل به.</p><span class="tag tag-gold">💧 طهارة</span></div>
+    <div class="card orange-border"><h3>❓ كيف أتعامل مع الربا في الإيجار؟</h3><p class="text">عقد الإيجار العادي لا يخلو من الربا. أما الإيجار المنتهي بالتمليك (leasing) فيحتاج إلى فحص تفصيلي. استشر عالماً موثوقاً.</p><span class="tag tag-gold">🏠 معاملات</span></div>
+    <div class="card orange-border"><h3>❓ هل يجوز دفع الزكاة لقريب فقير؟</h3><p class="text">يجوز دفع الزكاة للأقارب الفقراء (الأخ، العم، الخال...) بشرط ألا يكونوا من أصولك أو فروعك (الأب، الأم، الابن، البنت).</p><span class="tag tag-gold">💰 زكاة</span></div>
+    <div class="card orange-border"><h3>❓ ما حكم لبس البنطلون الجينز للصلاة؟</h3><p class="text">يجوز إذا كان يستر العورة ولا يصفها. الأفضل لبس الثوب الواسع (القُمْصَان) أثناء الصلاة. اللباس المستور المستقيم هو الأفضل.</p><span class="tag tag-gold">👔 لباس</span></div>
+    <div class="card orange-border"><h3>❓ هل يجوز الجمع بين نية قضاء ونية التطوع؟</h3><p class="text">عند الجمهور: نية القضاء لا تجتمع مع نية التطوع. إذا نويت القضاء فقط فهو قضاء، وإذا نويت التطوع فقط فهو تطوع. الأحوط الفصل بينهما.</p><span class="tag tag-gold">🧠 نية</span></div>
+</div>
+
+<div id="fadael" class="content-view">
+    <div class="section-header"><button class="back-btn" onclick="goHome()">← رئيسية</button><h2>🏆 فضائل الأعمال والأجور</h2></div>
+    <div class="card red-border"><h3>🤲 الاستغفار</h3><p class="text">"من لزم الاستغفار جعل الله له من كل هم فرجاً، ومن كل ضيق مخرجاً، ورزقه من حيث لا يحتسب" — الاستغفار مفتاح كل خير.</p><span class="tag">🌧️ فرج</span></div>
+    <div class="card red-border"><h3>🤝 الصدقة</h3><p class="text">"تصدقوا فإن الصدقة تُطفئ غضب الرب" — الصدقة لا تنقص مالاً بل تبارك فيه. وردة صدقك تُزرع في ميزانك يوم لا ينفع مال ولا بنون.</p><span class="tag">💚 بركة</span></div>
+    <div class="card red-border"><h3>☀️ صلاة الضحى</h3><p class="text">"يصلي الضحى أربع ركعات كفّل الله بهنّ ذنوب يومه وليلته" — صلاة الأوّابين، تُصلى عند ارتفاع الشمس قيد رمح.</p><span class="tag">🌅 نور</span></div>
+    <div class="card red-border"><h3>📖 قراءة القرآن</h3><p class="text">"اقرأوا القرآن فإنه يأتي يوم القيامة شفيعاً لأصحابه" — كل حرف بعشر حسنات. اجعل لك ورداً يومياً ولو خمس آيات.</p><span class="tag">📿 شفيع</span></div>
+    <div class="card red-border"><h3>🌸 الصلاة على النبي</h3><p class="text">"من صلّى عليّ صلاةً صلّى الله عليه بها عشراً" — الصلاة على النبي ﷺ تُذهب الهموم وتُفتح الأبواب المغلقة.</p><span class="tag">🕊️ عشر-fold</span></div>
+    <div class="card red-border"><h3>👨‍👩‍👧‍👦 بر الوالدين</h3><p class="text">"رضا الرب في رضا الوالد" — بر الوالدين من أعظم الأعمال وأقربها إلى الجنة. كلمة طيبة، نظرة رحمة، دعاء مستجاب.</p><span class="tag">❤️ جنة</span></div>
+</div>
+
+<div id="ad-container"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+window.addEventListener('load',function(){setTimeout(function(){document.getElementById('splash-screen').classList.add('hidden')},2500)});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('selectstart',e=>e.preventDefault());
+document.addEventListener('copy',e=>e.preventDefault());
+document.addEventListener('cut',e=>e.preventDefault());
+document.addEventListener('dragstart',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&['u','s','i','j','c'].includes(e.key.toLowerCase())))e.preventDefault()});
+
+document.addEventListener('deviceready',function(){
+    if(navigator.vibrate)navigator.vibrate(50);
+    if(typeof admob!=='undefined'){try{admob.banner.config({id:'ca-app-pub-1634388473102203/1778761348',isTesting:false,autoShow:true});admob.banner.prepare()}catch(e){console.log('AdMob not available')}}
+},false);
+
+function openSection(id){
+    document.getElementById('mainGrid').style.display='none';
+    document.querySelector('.welcome-bar').style.display='none';
+    document.querySelectorAll('.content-view').forEach(el=>el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(navigator.vibrate)navigator.vibrate(30);
+}
+function goHome(){
+    document.querySelectorAll('.content-view').forEach(el=>el.classList.remove('active'));
+    document.getElementById('mainGrid').style.display='grid';
+    document.querySelector('.welcome-bar').style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(navigator.vibrate)navigator.vibrate(20);
+}
+document.addEventListener('backbutton',function(e){
+    e.preventDefault();
+    const activeSection=document.querySelector('.content-view.active');
+    if(activeSection)goHome();else if(navigator.app&&navigator.app.exitApp)navigator.app.exitApp();
+},false);
+
+let count=0,dhikrIdx=0;
+const adhkar=[{name:'سبحان الله',target:33},{name:'الحمد لله',target:33},{name:'الله أكبر',target:33},{name:'لا إله إلا الله',target:100},{name:'أستغفر الله',target:100},{name:'اللهم صل وسلم على نبينا محمد',target:100}];
+function setDhikr(idx){dhikrIdx=idx;count=0;document.getElementById('counter').textContent='0';document.getElementById('dhikrName').textContent=adhkar[idx].name;document.querySelectorAll('.dhikr-tab').forEach((el,i)=>el.classList.toggle('active',i===idx))}
+function increment(){
+    count++;
+    document.getElementById('counter').textContent=count;
+    const target=adhkar[dhikrIdx].target;
+    if(count===33||count===100){
+        if(navigator.vibrate)navigator.vibrate([100,50,200,50,100]);
+        const circle=document.getElementById('tasbihCircle');
+        circle.style.transform='scale(1.08)';
+        setTimeout(()=>circle.style.transform='scale(1)',200);
+        if(count===target)showToast('🎉 أكملت '+target+' '+adhkar[dhikrIdx].name);
+    }else if(navigator.vibrate&&count%10===0)navigator.vibrate(15);
+}
+function resetCounter(){count=0;document.getElementById('counter').textContent='0';if(navigator.vibrate)navigator.vibrate([30,30,30])}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('touchmove',e=>{if(e.scale&&e.scale!==1)e.preventDefault()},{passive:false});
+</script>
+</body>
+</html>
